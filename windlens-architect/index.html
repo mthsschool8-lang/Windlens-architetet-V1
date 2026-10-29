@@ -1,0 +1,4282 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>b-DWAT WindLens — Cardboard Workshop & 3D Visualizer</title>
+    <meta name="description" content="Playful cartoonish cardboard CAD visualizer, 3D turbine simulator, clearance inspector, and printable template planner for b-DWAT WindLens school models." />
+    <meta property="og:title" content="b-DWAT WindLens — Cardboard Workshop & 3D Visualizer" />
+    <meta property="og:description" content="Playful cartoonish cardboard CAD visualizer, 3D turbine simulator, clearance inspector, and printable template planner for b-DWAT WindLens school models." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <style>
+      /* ==========================================================================
+         CARTOONISH CARDBOARD & CRAFT WORKSHOP STYLING (ZERO EXTERNAL DEPENDENCY)
+         ========================================================================== */
+      :root {
+        /* Kraft Paper & Cardboard Palette */
+        --cardboard-bg: #2d1e14;
+        --cardboard-desk: #3a271a;
+        --cutting-mat-grid: rgba(230, 190, 150, 0.08);
+        --kraft-main: #dfa97b;
+        --kraft-light: #edd3bc;
+        --kraft-card: #f7ede2;
+        --kraft-border: #4a2c17;
+        --flute-dark: #6e3e1e;
+        --tape-yellow: rgba(254, 240, 138, 0.92);
+        --tape-border: rgba(202, 138, 4, 0.5);
+
+        /* Cartoon Inks & Accents */
+        --ink-dark: #2b1708;
+        --ink-muted: #6b4c35;
+        --ink-light: #9c7352;
+        --primary-blue: #0284c7;
+        --primary-blue-hover: #0369a1;
+        --accent-orange: #f97316;
+        --accent-amber: #f59e0b;
+        --card-green: #10b981;
+        --danger-red: #ef4444;
+
+        /* Shadows & Borders */
+        --shadow-cartoon: 4px 5px 0px rgba(45, 23, 10, 0.45);
+        --shadow-btn: 0 4px 0px #4a2c17;
+        --shadow-btn-pressed: 0 1px 0px #4a2c17;
+        --border-thick: 3px solid var(--kraft-border);
+
+        /* Fonts */
+        --font-cartoon: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Comic Sans MS", "Chalkboard SE", sans-serif;
+        --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: var(--font-cartoon);
+        background-color: var(--cardboard-bg);
+        background-image:
+          linear-gradient(var(--cutting-mat-grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--cutting-mat-grid) 1px, transparent 1px);
+        background-size: 24px 24px;
+        color: var(--ink-dark);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      /* Custom Cardboard Scrollbar */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #23160e;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #c28859;
+        border: 2px solid #4a2c17;
+        border-radius: 6px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #dfa97b;
+      }
+
+      /* ==========================================================================
+         TOP CARDBOARD HEADER
+         ========================================================================== */
+      header.craft-header {
+        background: #dfa97b;
+        background-image: repeating-linear-gradient(
+          45deg,
+          rgba(110, 62, 30, 0.04) 0px,
+          rgba(110, 62, 30, 0.04) 4px,
+          transparent 4px,
+          transparent 8px
+        );
+        border-bottom: var(--border-thick);
+        padding: 10px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+        z-index: 50;
+        position: relative;
+      }
+
+      /* Decorative Masking Tape on header */
+      .header-tape {
+        position: absolute;
+        top: -6px;
+        left: 240px;
+        width: 80px;
+        height: 18px;
+        background: var(--tape-yellow);
+        border: 1px dashed var(--tape-border);
+        transform: rotate(-3deg);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        pointer-events: none;
+      }
+
+      .brand-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-icon {
+        width: 44px;
+        height: 44px;
+        background: #0284c7;
+        border: 3px solid #082f49;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 2px 3px 0px #082f49;
+        transform: rotate(-2deg);
+      }
+
+      .brand-text h1 {
+        font-size: 1.22rem;
+        font-weight: 900;
+        letter-spacing: -0.01em;
+        color: #2b1708;
+        text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .brand-text p {
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #5a3820;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* ==========================================================================
+         CARTOON BUTTONS & CHIPS
+         ========================================================================== */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px 12px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 2px solid var(--kraft-border);
+        background: #f7ede2;
+        color: #3d2314;
+        box-shadow: var(--shadow-btn);
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+        text-decoration: none;
+        user-select: none;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 0px #4a2c17;
+      }
+
+      .btn:active {
+        transform: translateY(3px);
+        box-shadow: var(--shadow-btn-pressed);
+      }
+
+      .btn-primary {
+        background: #0284c7;
+        border-color: #082f49;
+        color: #ffffff;
+        box-shadow: 0 4px 0px #082f49;
+      }
+      .btn-primary:hover {
+        background: #0369a1;
+        box-shadow: 0 5px 0px #082f49;
+      }
+      .btn-primary:active {
+        box-shadow: 0 1px 0px #082f49;
+      }
+
+      .btn-accent {
+        background: #f59e0b;
+        border-color: #78350f;
+        color: #2e1605;
+        box-shadow: 0 4px 0px #78350f;
+      }
+      .btn-accent:hover {
+        background: #d97706;
+        color: #fff;
+      }
+
+      .btn-danger {
+        background: #ef4444;
+        border-color: #7f1d1d;
+        color: #ffffff;
+        box-shadow: 0 4px 0px #7f1d1d;
+      }
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      .btn-green {
+        background: #10b981;
+        border-color: #064e3b;
+        color: #ffffff;
+        box-shadow: 0 4px 0px #064e3b;
+      }
+      .btn-green:hover {
+        background: #059669;
+      }
+
+      .btn-sm {
+        padding: 4px 9px;
+        font-size: 0.74rem;
+        border-radius: 8px;
+        box-shadow: 0 3px 0px var(--kraft-border);
+      }
+      .btn-sm:active {
+        box-shadow: 0 1px 0px var(--kraft-border);
+      }
+
+      /* Units Toggle (Cardboard pill) */
+      .unit-pill {
+        display: inline-flex;
+        background: #2b1708;
+        border: 2px solid #4a2c17;
+        border-radius: 10px;
+        padding: 2px;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      }
+      .unit-pill button {
+        background: transparent;
+        border: none;
+        color: #dfa97b;
+        padding: 4px 9px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .unit-pill button.active {
+        background: #f59e0b;
+        color: #2e1605;
+        box-shadow: 0 2px 0 #78350f;
+      }
+
+      /* ==========================================================================
+         NAVIGATION TABS (STICKY POST-IT / CARDBOARD INDEX TABS)
+         ========================================================================== */
+      nav.craft-nav {
+        background: #c89360;
+        border-bottom: var(--border-thick);
+        display: flex;
+        overflow-x: auto;
+        padding: 6px 14px 0 14px;
+        gap: 6px;
+      }
+
+      .nav-tab {
+        padding: 8px 14px;
+        font-size: 0.82rem;
+        font-weight: 800;
+        color: #3b2211;
+        border: 2px solid var(--kraft-border);
+        border-bottom: none;
+        background: #dfa97b;
+        border-radius: 10px 10px 0 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        transition: all 0.15s ease;
+        box-shadow: 0 -2px 0 rgba(0,0,0,0.1);
+      }
+      .nav-tab:hover {
+        background: #edd3bc;
+        transform: translateY(-2px);
+      }
+      .nav-tab.active {
+        background: #f7ede2;
+        color: #241205;
+        border-bottom: 2px solid #f7ede2;
+        transform: translateY(-2px);
+        box-shadow: 0 -3px 0 var(--kraft-border);
+      }
+      .nav-badge {
+        font-size: 0.68rem;
+        padding: 2px 6px;
+        border-radius: 8px;
+        background: #4a2c17;
+        color: #edd3bc;
+        font-weight: 900;
+      }
+      .nav-badge.danger {
+        background: var(--danger-red);
+        color: #fff;
+      }
+      .nav-badge.green {
+        background: var(--card-green);
+        color: #fff;
+      }
+
+      /* ==========================================================================
+         MAIN WORKSPACE LAYOUT
+         ========================================================================== */
+      main.craft-workspace {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 105px);
+        overflow: hidden;
+      }
+
+      .tab-content {
+        display: none;
+        height: 100%;
+        overflow-y: auto;
+      }
+      .tab-content.active {
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* 2-Column Grid for Workbench */
+      .workbench-grid {
+        display: grid;
+        grid-template-columns: 1fr 410px;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      @media (max-width: 1024px) {
+        .workbench-grid {
+          grid-template-columns: 1fr;
+          overflow-y: auto;
+        }
+        main.craft-workspace {
+          height: auto;
+          overflow: visible;
+        }
+      }
+
+      /* ==========================================================================
+         VIEWPORT & 3D VIEWER CONTAINER
+         ========================================================================== */
+      .viewport-panel {
+        display: flex;
+        flex-direction: column;
+        background: #1a1009;
+        position: relative;
+        overflow: hidden;
+        border-right: var(--border-thick);
+      }
+
+      .viewport-toolbar {
+        background: #edd3bc;
+        padding: 8px 14px;
+        border-bottom: var(--border-thick);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        flex-wrap: wrap;
+        z-index: 20;
+      }
+
+      .view-modes {
+        display: flex;
+        gap: 4px;
+        background: #2b1708;
+        padding: 3px;
+        border-radius: 8px;
+        border: 2px solid var(--kraft-border);
+      }
+
+      .view-mode-btn {
+        background: transparent;
+        border: none;
+        color: #dfa97b;
+        padding: 4px 9px;
+        font-size: 0.74rem;
+        font-weight: 800;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .view-mode-btn.active {
+        background: #f59e0b;
+        color: #2b1708;
+      }
+
+      .canvas-container {
+        flex: 1;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        min-height: 420px;
+        cursor: grab;
+      }
+      .canvas-container:active {
+        cursor: grabbing;
+      }
+
+      canvas#cadCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* HUD Over Viewport */
+      .canvas-hud {
+        position: absolute;
+        bottom: 12px;
+        left: 12px;
+        background: rgba(247, 237, 226, 0.95);
+        border: 2px solid var(--kraft-border);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        color: #3d2314;
+        box-shadow: var(--shadow-cartoon);
+        pointer-events: none;
+        line-height: 1.4;
+      }
+      .canvas-hud strong {
+        color: #0284c7;
+      }
+
+      /* 3D Spin Control Floating Deck */
+      .spin-control-deck {
+        position: absolute;
+        top: 12px;
+        left: 14px;
+        background: rgba(247, 237, 226, 0.96);
+        border: 2px solid var(--kraft-border);
+        border-radius: 10px;
+        padding: 6px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: var(--shadow-cartoon);
+        z-index: 25;
+      }
+
+      /* Assembly Floating Toast Banner */
+      .assembly-toast {
+        position: absolute;
+        top: 60px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-10px);
+        background: #fef08a;
+        border: 3px solid #713f12;
+        border-radius: 12px;
+        padding: 8px 18px;
+        font-size: 0.85rem;
+        font-weight: 900;
+        color: #713f12;
+        box-shadow: 0 4px 0 #713f12, 0 8px 18px rgba(0,0,0,0.3);
+        display: none;
+        align-items: center;
+        gap: 8px;
+        z-index: 30;
+        pointer-events: none;
+        transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .assembly-toast.show {
+        display: flex;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      .viewport-controls-floating {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        z-index: 20;
+      }
+      .hud-icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #f7ede2;
+        border: 2px solid var(--kraft-border);
+        color: #3d2314;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 3px 0px var(--kraft-border);
+        font-weight: 900;
+      }
+      .hud-icon-btn:hover {
+        background: #edd3bc;
+        transform: translateY(-1px);
+      }
+      .hud-icon-btn:active {
+        transform: translateY(2px);
+        box-shadow: 0 1px 0px var(--kraft-border);
+      }
+
+      /* ==========================================================================
+         SIDEBAR & CARTOON CRAFT CARDS
+         ========================================================================== */
+      .sidebar-panel {
+        background: #2b1d14;
+        background-image:
+          linear-gradient(rgba(230, 190, 150, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(230, 190, 150, 0.04) 1px, transparent 1px);
+        background-size: 16px 16px;
+        overflow-y: auto;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--kraft-card);
+        border: var(--border-thick);
+        border-radius: 14px;
+        padding: 14px;
+        box-shadow: var(--shadow-cartoon);
+        position: relative;
+      }
+
+      /* Tape decoration on cards */
+      .card-tape {
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%) rotate(-1deg);
+        width: 70px;
+        height: 18px;
+        background: var(--tape-yellow);
+        border: 1px dashed var(--tape-border);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+        border-radius: 2px;
+        pointer-events: none;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 8px;
+        border-bottom: 2px dashed #d5bba2;
+      }
+      .card-header h3 {
+        font-size: 0.92rem;
+        font-weight: 900;
+        color: #2b1708;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* Form controls */
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 10px;
+      }
+      .form-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-label-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.78rem;
+      }
+      .form-label {
+        font-weight: 800;
+        color: #3b2211;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .form-val-display {
+        font-family: var(--font-mono);
+        color: #0284c7;
+        font-weight: 800;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      input[type="number"],
+      input[type="text"],
+      select {
+        background: #ffffff;
+        border: 2px solid var(--kraft-border);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #2b1708;
+        font-family: var(--font-mono);
+        width: 100%;
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+      }
+      input[type="number"]:focus,
+      input[type="text"]:focus,
+      select:focus {
+        outline: none;
+        border-color: #0284c7;
+        box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25);
+      }
+
+      input[type="range"] {
+        accent-color: #f59e0b;
+        height: 8px;
+        background: #d4a373;
+        border: 2px solid var(--kraft-border);
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      /* Cartoon Postal Stamps / Badges */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 7px;
+        border-radius: 6px;
+        font-size: 0.66rem;
+        font-weight: 900;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        border: 1.5px solid;
+      }
+      .badge-guide {
+        background: #e0f2fe;
+        color: #0284c7;
+        border-color: #0284c7;
+      }
+      .badge-calc {
+        background: #d1fae5;
+        color: #059669;
+        border-color: #059669;
+      }
+      .badge-user {
+        background: #fef3c7;
+        color: #d97706;
+        border-color: #d97706;
+      }
+      .badge-prov {
+        background: #ede9fe;
+        color: #7c3aed;
+        border-color: #7c3aed;
+      }
+
+      /* Quick preset chips */
+      .preset-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+      }
+      .preset-chip {
+        background: #edd3bc;
+        border: 2px solid var(--kraft-border);
+        border-radius: 6px;
+        padding: 3px 6px;
+        font-size: 0.72rem;
+        font-weight: 800;
+        color: #3b2211;
+        cursor: pointer;
+        box-shadow: 0 2px 0 var(--kraft-border);
+      }
+      .preset-chip:hover {
+        background: #fdf6ec;
+      }
+      .preset-chip.active {
+        background: #f59e0b;
+        color: #2b1708;
+        box-shadow: 0 1px 0 var(--kraft-border);
+      }
+
+      /* Alert / Sticky Note Boxes */
+      .alert-box {
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 0.78rem;
+        line-height: 1.45;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        border: 2px solid;
+        box-shadow: 2px 3px 0px rgba(0,0,0,0.15);
+      }
+      .alert-danger {
+        background: #fee2e2;
+        border-color: #ef4444;
+        color: #991b1b;
+      }
+      .alert-warning {
+        background: #fef3c7;
+        border-color: #f59e0b;
+        color: #92400e;
+      }
+      .alert-info {
+        background: #e0f2fe;
+        border-color: #0284c7;
+        color: #075985;
+      }
+      .alert-success {
+        background: #d1fae5;
+        border-color: #10b981;
+        color: #065f46;
+      }
+
+      /* Data Tables */
+      .cad-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.78rem;
+      }
+      .cad-table th {
+        background: #ecd7c0;
+        color: #4a2c17;
+        font-weight: 800;
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 2px solid var(--kraft-border);
+        white-space: nowrap;
+      }
+      .cad-table td {
+        padding: 8px 10px;
+        border-bottom: 1px dashed #d5bba2;
+        color: #2b1708;
+        font-weight: 600;
+      }
+      .cad-table tr:hover td {
+        background: rgba(223, 169, 123, 0.15);
+      }
+
+      /* Full View Content Sections */
+      .full-section {
+        padding: 24px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .section-hero {
+        background: var(--kraft-card);
+        border: var(--border-thick);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: var(--shadow-cartoon);
+        position: relative;
+      }
+      .section-hero h2 {
+        font-size: 1.35rem;
+        font-weight: 900;
+        margin-bottom: 4px;
+        color: #2b1708;
+      }
+      .section-hero p {
+        color: #5a3820;
+        font-size: 0.88rem;
+        font-weight: 600;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+      }
+
+      .tree-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #ffffff;
+        border: 2px solid #d5bba2;
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+      }
+      .tree-item.selected {
+        border-color: #0284c7;
+        background: #f0f9ff;
+      }
+
+      .stat-card {
+        background: #edd3bc;
+        border: 2px solid var(--kraft-border);
+        border-radius: 8px;
+        padding: 10px;
+        box-shadow: 2px 2px 0 var(--kraft-border);
+      }
+      .stat-title {
+        font-size: 0.72rem;
+        color: #5a3820;
+        text-transform: uppercase;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+      }
+      .stat-val {
+        font-size: 1.35rem;
+        font-weight: 900;
+        font-family: var(--font-mono);
+        color: #0284c7;
+        margin-top: 2px;
+      }
+      .stat-sub {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: #6e4726;
+      }
+
+      .toggle-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        cursor: pointer;
+        user-select: none;
+        color: #3b2211;
+      }
+      .toggle-label input[type="checkbox"] {
+        accent-color: #0284c7;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+      }
+
+      /* Printable Templates */
+      .template-card {
+        background: #ffffff;
+        color: #1e1005;
+        border-radius: 12px;
+        padding: 16px;
+        border: 2px solid var(--kraft-border);
+        box-shadow: var(--shadow-cartoon);
+        overflow-x: auto;
+      }
+      .template-card h4 {
+        color: #1e1005;
+        margin-bottom: 6px;
+        font-size: 1rem;
+        font-weight: 900;
+      }
+      .template-card p {
+        color: #5a3820;
+        font-size: 0.78rem;
+        margin-bottom: 12px;
+      }
+
+      .calibration-bar {
+        border: 2px solid #000;
+        height: 16px;
+        width: 100mm;
+        margin: 10px 0;
+        position: relative;
+        background: repeating-linear-gradient(
+          to right,
+          #000 0,
+          #000 1mm,
+          transparent 1mm,
+          transparent 10mm
+        );
+      }
+
+      /* Modal */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(35, 20, 10, 0.85);
+        backdrop-filter: blur(4px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 16px;
+      }
+      .modal-backdrop.open {
+        display: flex;
+      }
+      .modal-window {
+        background: var(--kraft-card);
+        border: var(--border-thick);
+        border-radius: 14px;
+        width: 100%;
+        max-width: 540px;
+        padding: 24px;
+        box-shadow: 6px 8px 0px rgba(0, 0, 0, 0.5);
+      }
+
+      @media print {
+        header.craft-header,
+        nav.craft-nav,
+        .viewport-toolbar,
+        .sidebar-panel,
+        .spin-control-deck,
+        .no-print {
+          display: none !important;
+        }
+        body,
+        main.craft-workspace,
+        .tab-content {
+          background: #fff !important;
+          color: #000 !important;
+          height: auto !important;
+          overflow: visible !important;
+        }
+        .template-card {
+          box-shadow: none !important;
+          border: 1px solid #000 !important;
+          page-break-after: always;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOP CARDBOARD HEADER -->
+    <header class="craft-header">
+      <div class="header-tape"></div>
+      <div class="brand-box">
+        <div class="brand-icon">
+          <!-- Cartoonish Turbine WindLens SVG -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" fill="#38bdf8" fill-opacity="0.2"/>
+            <circle cx="12" cy="12" r="3.5" fill="#facc15" stroke="#713f12" stroke-width="2"/>
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            <path d="M12 8.5c2-3 5-3 5-3s0 3-2 5M15.5 12c3 2 3 5 3 5s-3 0-5-2M12 15.5c-2 3-5 3-5 3s0-3 2-5M8.5 12c-3-2-3-5-3-5s3 0 5 2" stroke="#ffffff" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>b-DWAT WindLens — Cardboard Workshop ✂️</h1>
+          <p>Cartoonish Cardboard CAD Workbench, Interactive 3D Viewer & 1:1 Cut Planner</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Units Toggle -->
+        <div class="unit-pill">
+          <button id="unitMmBtn" class="active" onclick="App.setUnit('mm')">mm</button>
+          <button id="unitCmBtn" onclick="App.setUnit('cm')">cm</button>
+        </div>
+
+        <!-- Scale Presets Quick Dropdown -->
+        <select id="quickScaleSelect" onchange="App.setScalePreset(this.value)" style="width: auto; padding: 4px 8px; font-weight:800;">
+          <option value="0.25">25% (Mini Model)</option>
+          <option value="0.333">33.3% (Desk Model)</option>
+          <option value="0.5">50% (Half Scale)</option>
+          <option value="0.75">75% (Medium)</option>
+          <option value="1.0" selected>100% (Baseline 300mm Throat)</option>
+          <option value="1.25">125% (Large)</option>
+          <option value="1.5">150% (Max)</option>
+        </select>
+
+        <!-- Save / Export JSON -->
+        <button class="btn btn-sm" onclick="App.exportProjectJSON()" title="Export complete project state to JSON">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Export
+        </button>
+
+        <!-- Load JSON -->
+        <button class="btn btn-sm" onclick="document.getElementById('importFileInput').click()" title="Load configuration from JSON">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          Import
+        </button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="App.importProjectJSON(event)" />
+
+        <!-- Download Standalone HTML -->
+        <button class="btn btn-sm btn-accent" onclick="App.downloadStandaloneHTML()" title="Download complete single-file HTML to run offline without any server or install">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v10M17 7l-5 5-5-5M4 14v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>
+          Save HTML
+        </button>
+
+        <!-- Print Templates -->
+        <button class="btn btn-sm btn-primary" onclick="App.printDrawings()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print 1:1
+        </button>
+
+        <!-- Reset Button -->
+        <button class="btn btn-sm btn-danger" onclick="App.confirmReset()" title="Reset all dimensions to baseline fabrication guide">
+          Reset
+        </button>
+      </div>
+    </header>
+
+    <!-- CARDBOARD INDEX TABS -->
+    <nav class="craft-nav">
+      <button class="nav-tab active" data-tab="tab-viewport" onclick="App.switchTab('tab-viewport')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+        📦 3D Turbine Viewer & Workshop
+      </button>
+
+      <button class="nav-tab" data-tab="tab-geometry" onclick="App.switchTab('tab-geometry')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2 12h20M12 2v20M5 5l14 14"></path></svg>
+        📐 Passage Geometry
+      </button>
+
+      <button class="nav-tab" data-tab="tab-rotor" onclick="App.switchTab('tab-rotor')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10M12 12L2 12"></path></svg>
+        🌀 Rotor & 2mm Clearance
+        <span id="navClearanceBadge" class="nav-badge green">2.0 mm</span>
+      </button>
+
+      <button class="nav-tab" data-tab="tab-assembly-tree" onclick="App.switchTab('tab-assembly-tree')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        🧩 12 Assembly Parts
+      </button>
+
+      <button class="nav-tab" data-tab="tab-cutlist" onclick="App.switchTab('tab-cutlist')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+        ✂️ Cut List & Sheet Nesting
+      </button>
+
+      <button class="nav-tab" data-tab="tab-templates" onclick="App.switchTab('tab-templates')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        🖨️ Printable 1:1 Patterns
+      </button>
+
+      <button class="nav-tab" data-tab="tab-budget" onclick="App.switchTab('tab-budget')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        💰 Material Budget (₹405)
+      </button>
+
+      <button class="nav-tab" data-tab="tab-warnings" onclick="App.switchTab('tab-warnings')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        ⚠️ Diagnostics
+        <span id="navWarningCountBadge" class="nav-badge danger" style="display:none;">0</span>
+      </button>
+    </nav>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="craft-workspace">
+
+      <!-- TAB 1: 3D TURBINE VIEWER & WORKBENCH -->
+      <section id="tab-viewport" class="tab-content active">
+        <div class="workbench-grid">
+          <!-- Viewport Center -->
+          <div class="viewport-panel">
+            <div class="viewport-toolbar">
+              <!-- View Mode Selection -->
+              <div class="view-modes">
+                <button class="view-mode-btn active" id="btnModeIso" onclick="App.setViewMode('iso')">
+                  📦 3D Perspective
+                </button>
+                <button class="view-mode-btn" id="btnModeSide" onclick="App.setViewMode('side')">
+                  📐 Side Section
+                </button>
+                <button class="view-mode-btn" id="btnModeFront" onclick="App.setViewMode('front')">
+                  ⭕ Front Face
+                </button>
+                <button class="view-mode-btn" id="btnModeTop" onclick="App.setViewMode('top')">
+                  📋 Top Plan
+                </button>
+                <button class="view-mode-btn" id="btnModeExploded" onclick="App.setViewMode('exploded')">
+                  💥 Exploded 3D
+                </button>
+              </div>
+
+              <!-- Quick Viewport Toggles -->
+              <div style="display:flex; align-items:center; gap:8px;">
+                <!-- 3D Procedural Fly-In Assembly Animation Button -->
+                <button id="btnAssembleAnim" class="btn btn-sm btn-accent" onclick="App.triggerAssemblyAnimation()" title="Trigger 3D procedural fly-in assembly animation">
+                  🎬 Fly-In Assembly
+                </button>
+                <label class="toggle-label" title="Cutaway half section to see rotor & hub inside">
+                  <input type="checkbox" id="chkCutaway" onchange="App.toggleCutaway(this.checked)"> Cutaway
+                </label>
+                <label class="toggle-label" title="Show dimension datums & arrows on viewport">
+                  <input type="checkbox" id="chkDimensions" checked onchange="App.toggleDimensions(this.checked)"> Dimensions
+                </label>
+                <label class="toggle-label" title="Show cartoon wireframe creases">
+                  <input type="checkbox" id="chkWireframe" onchange="App.toggleWireframe(this.checked)"> Wireframe
+                </label>
+              </div>
+            </div>
+
+            <!-- Canvas Viewport -->
+            <div class="canvas-container" id="canvasBox">
+              <canvas id="cadCanvas"></canvas>
+
+              <!-- Floating Celebration Toast -->
+              <div id="assemblyToast" class="assembly-toast">
+                <span>🎉</span>
+                <span id="assemblyToastText">100% Assembled! Cardboard Turbine Structure Locked.</span>
+              </div>
+
+              <!-- Floating 3D Spin Simulation Deck -->
+              <div class="spin-control-deck">
+                <button id="btnAssembleDeck" class="btn btn-sm btn-accent" onclick="App.triggerAssemblyAnimation()" title="Watch components fly into place in 3D">
+                  🎬 Assemble
+                </button>
+                <button id="btnSpinToggle" class="btn btn-sm btn-green" onclick="App.toggleSpin()">
+                  ▶ Spin Turbine
+                </button>
+                <div style="display:flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:800;">
+                  <span>Wind:</span>
+                  <input type="range" id="windSpeedRange" min="0" max="12" value="5" step="0.5" style="width:75px;" oninput="App.onWindSpeedChange(this.value)">
+                  <span id="dispWindSpeed" style="font-family:var(--font-mono); color:#0284c7; width:45px;">5.0 m/s</span>
+                </div>
+                <div style="font-size:0.72rem; font-weight:800; color:#5a3820;">
+                  RPM: <strong id="dispRpmVal" style="color:#10b981; font-family:var(--font-mono);">340</strong>
+                </div>
+                <!-- LED Glow Indicator -->
+                <div id="ledIndicator" title="12V Generator Output LED" style="width:14px; height:14px; border-radius:50%; background:#94a3b8; border:2px solid #4a2c17; box-shadow:0 0 0 1px #fff;"></div>
+              </div>
+
+              <!-- Floating Camera Navigation Buttons -->
+              <div class="viewport-controls-floating">
+                <button class="hud-icon-btn" onclick="App.resetCamera()" title="Reset Camera View">↺</button>
+                <button class="hud-icon-btn" onclick="App.zoomCamera(1.2)" title="Zoom In">+</button>
+                <button class="hud-icon-btn" onclick="App.zoomCamera(0.8)" title="Zoom Out">−</button>
+              </div>
+
+              <!-- HUD Overlay -->
+              <div class="canvas-hud" id="canvasHud">
+                <div>Scale: <strong id="hudScale">100.0%</strong> | View: <strong id="hudMode">3D Perspective</strong></div>
+                <div>Throat ⌀: <strong id="hudThroat">300.0 mm</strong> | Tip Clearance: <strong id="hudClearance">2.0 mm</strong></div>
+                <div style="font-size:0.68rem; color:#6b4c35; margin-top:2px;">🖱️ Left-click drag: 3D Orbit | Shift+drag or Right-click: Pan | Scroll: Zoom</div>
+              </div>
+            </div>
+
+            <!-- Exploded slider bar (visible in Exploded mode) -->
+            <div id="explodedSliderBar" style="display:none; padding:10px 18px; background:#edd3bc; border-top:var(--border-thick); align-items:center; gap:12px;">
+              <span style="font-size:0.8rem; font-weight:900; color:#2b1708;">💥 Exploded Distance:</span>
+              <input type="range" id="explodedDistRange" min="0" max="150" value="70" oninput="App.setExplodedDist(this.value)" style="flex:1;">
+              <span id="explodedDistVal" style="font-family:var(--font-mono); font-size:0.8rem; font-weight:800; width:50px;">70%</span>
+            </div>
+          </div>
+
+          <!-- Sidebar Controls -->
+          <div class="sidebar-panel">
+            <!-- Conflict Alert Card -->
+            <div id="conflictAlertCard" class="card" style="border: 3px solid #f59e0b; background:#fef3c7;">
+              <div class="card-tape"></div>
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <div style="font-size:1.4rem;">⚠️</div>
+                <div>
+                  <strong style="color:#78350f; font-size:0.85rem;">Guide Blade Length Conflict Checker:</strong>
+                  <div style="font-size:0.75rem; color:#92400e; margin-top:2px;" id="conflictAlertText">
+                    Stated 145mm blade length with 30mm hub in a 300mm throat needs datum selection to prevent tip collision!
+                  </div>
+                  <button class="btn btn-sm btn-accent" style="margin-top:8px;" onclick="App.switchTab('tab-rotor')">Resolve Blade Datum &rarr;</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Master Parametric Scaling Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>
+                  <span>📦</span>
+                  Parametric Scaling Engine
+                </h3>
+                <span class="badge badge-user">Proportional</span>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Scale Factor:</span>
+                  <span class="form-val-display" id="dispScaleFactor">1.000× (100.0%)</span>
+                </div>
+                <input type="range" id="scaleRange" min="20" max="200" value="100" step="1" oninput="App.onScaleRangeInput(this.value)">
+                <div class="preset-chips">
+                  <span class="preset-chip" onclick="App.setScalePreset(0.25)">25%</span>
+                  <span class="preset-chip" onclick="App.setScalePreset(0.333)">33.3%</span>
+                  <span class="preset-chip" onclick="App.setScalePreset(0.5)">50%</span>
+                  <span class="preset-chip" onclick="App.setScalePreset(0.75)">75%</span>
+                  <span class="preset-chip active" id="chip100" onclick="App.setScalePreset(1.0)">100% (Base)</span>
+                  <span class="preset-chip" onclick="App.setScalePreset(1.25)">125%</span>
+                  <span class="preset-chip" onclick="App.setScalePreset(1.5)">150%</span>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Target Throat ⌀:</label>
+                  <input type="number" id="inputTargetThroat" value="300" step="5" onchange="App.onTargetThroatChange(this.value)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Throat Circumference:</label>
+                  <input type="text" id="dispThroatCirc" value="942.5 mm" readonly style="background:#edd3bc; color:#059669; font-weight:800;">
+                </div>
+              </div>
+
+              <div style="font-size:0.72rem; color:#5a3820; margin-top:4px; line-height:1.35; font-weight:600;">
+                📐 Mathematical exact: <strong>π × D = 942.48 mm</strong>. Guide rounded: <strong>942 mm</strong> (-0.48 mm difference).
+              </div>
+
+              <div style="margin-top:10px; padding-top:8px; border-top:2px dashed #d5bba2;">
+                <label class="toggle-label">
+                  <input type="checkbox" id="chkLockHardware" checked onchange="App.toggleLockHardware(this.checked)">
+                  <span>Lock Hardware (3mm skewer, motor dia don't scale)</span>
+                </label>
+                <label class="toggle-label" style="margin-top:4px;">
+                  <input type="checkbox" id="chkRoundMm" checked onchange="App.toggleRoundMm(this.checked)">
+                  <span>Round cut dimensions to nearest 1 mm</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Primary Dimensions Table Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>
+                  <span>📏</span>
+                  Model Dimensions Overview
+                </h3>
+                <span class="badge badge-calc">Live Scaled</span>
+              </div>
+
+              <table class="cad-table">
+                <thead>
+                  <tr>
+                    <th>Component</th>
+                    <th>Guide Spec</th>
+                    <th>Active Value</th>
+                    <th>Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Inlet ⌀ ($D_{\text{in}}$)</td>
+                    <td>400 mm</td>
+                    <td id="quickInletVal" class="form-val-display">400 mm</td>
+                    <td><span class="badge badge-guide">Guide</span></td>
+                  </tr>
+                  <tr>
+                    <td>Throat ⌀ ($D_{\text{throat}}$)</td>
+                    <td>300 mm</td>
+                    <td id="quickThroatVal" class="form-val-display">300 mm</td>
+                    <td><span class="badge badge-guide">Guide</span></td>
+                  </tr>
+                  <tr>
+                    <td>Outlet ⌀ ($D_{\text{out}}$)</td>
+                    <td>660 mm</td>
+                    <td id="quickOutletVal" class="form-val-display">660 mm</td>
+                    <td><span class="badge badge-guide">Guide</span></td>
+                  </tr>
+                  <tr>
+                    <td>Brim Outer ⌀</td>
+                    <td>Unstated</td>
+                    <td id="quickBrimVal" class="form-val-display">780 mm</td>
+                    <td><span class="badge badge-prov">Provisional</span></td>
+                  </tr>
+                  <tr>
+                    <td>Rotor ⌀ ($D_{\text{rotor}}$)</td>
+                    <td>Clearance 2mm</td>
+                    <td id="quickRotorVal" class="form-val-display">296 mm</td>
+                    <td><span class="badge badge-calc">Calculated</span></td>
+                  </tr>
+                  <tr>
+                    <td>Radial Tip Clearance</td>
+                    <td>≤ 2 mm</td>
+                    <td id="quickClearanceVal" class="form-val-display" style="color:#059669;">2.0 mm</td>
+                    <td><span class="badge badge-calc">Optimal</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div style="margin-top:10px; display:flex; justify-content:space-between;">
+                <button class="btn btn-sm" onclick="App.switchTab('tab-geometry')">Passage Geometry &rarr;</button>
+                <button class="btn btn-sm" onclick="App.switchTab('tab-cutlist')">Cut List &rarr;</button>
+              </div>
+            </div>
+
+            <!-- Material Spec Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>
+                  <span>✂️</span>
+                  Cardboard & Liner Material
+                </h3>
+                <span class="badge badge-user">Practical</span>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Cardboard Flute:</label>
+                  <select id="selCardboardType" onchange="App.onCardboardTypeChange(this.value)">
+                    <option value="3" selected>3-Ply Corrugated (~3 mm)</option>
+                    <option value="5">5-Ply Corrugated (~5 mm)</option>
+                    <option value="2">Thin Cereal Box (2 mm)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">PVC Sheet Liner:</label>
+                  <select id="selPvcThickness" onchange="App.onPvcThicknessChange(this.value)">
+                    <option value="0.8" selected>0.8 mm (Flexible File)</option>
+                    <option value="1.0">1.0 mm (Rigid Sheet)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Throat Seam Lap:</label>
+                  <input type="number" id="inputSeamOverlap" value="20" min="5" max="50" onchange="App.onSeamOverlapChange(this.value)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Bamboo Skewer ⌀:</label>
+                  <input type="number" id="inputSkewerDia" value="3.0" step="0.5" min="2" max="6" onchange="App.onSkewerDiaChange(this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: GEOMETRY & PASSAGE EDITOR -->
+      <section id="tab-geometry" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>📐 Diffuser & Passage Geometry Editor</h2>
+            <p>
+              The baseline guide specifies the 300mm throat, 400mm inlet, and 660mm outlet, while leaving axial section lengths and brim height unspecified. Adjust these values below to inspect flow expansion angles and area ratios.
+            </p>
+          </div>
+
+          <div class="grid-3">
+            <!-- Diameters Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Flow Passage Diameters</h3>
+                <span class="badge badge-guide">From Guide</span>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Inlet Diameter ($D_{\text{in}}$):</span>
+                  <span class="badge badge-guide">400 mm</span>
+                </div>
+                <input type="number" id="geoInletDia" value="400" step="5" oninput="App.updateGeoParam('inletDia', this.value)">
+                <div class="stat-sub">Radius $R_{\text{in}}$: <span id="geoInletRadius">200 mm</span></div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Throat Diameter ($D_{\text{throat}}$):</span>
+                  <span class="badge badge-guide">300 mm</span>
+                </div>
+                <input type="number" id="geoThroatDia" value="300" step="5" oninput="App.updateGeoParam('throatDia', this.value)">
+                <div class="stat-sub">Radius $R_{\text{throat}}$: <span id="geoThroatRadius">150 mm</span></div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Diffuser Outlet Diameter ($D_{\text{out}}$):</span>
+                  <span class="badge badge-guide">660 mm</span>
+                </div>
+                <input type="number" id="geoOutletDia" value="660" step="5" oninput="App.updateGeoParam('outletDia', this.value)">
+                <div class="stat-sub">Radius $R_{\text{out}}$: <span id="geoOutletRadius">330 mm</span></div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Brim Flange Radial Height ($H_{\text{brim}}$):</span>
+                  <span class="badge badge-prov">Provisional</span>
+                </div>
+                <input type="number" id="geoBrimHeight" value="60" step="5" oninput="App.updateGeoParam('brimHeight', this.value)">
+                <div class="stat-sub">Total Outer Brim ⌀: <span id="geoTotalBrimDia">780 mm</span></div>
+              </div>
+            </div>
+
+            <!-- Axial Lengths Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Axial Lengths & Expansion</h3>
+                <span class="badge badge-prov">Provisional Values</span>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Inlet Converging Length ($L_{\text{in}}$):</span>
+                  <span class="badge badge-prov">80 mm</span>
+                </div>
+                <input type="number" id="geoInletLen" value="80" step="5" oninput="App.updateGeoParam('inletLen', this.value)">
+                <div class="stat-sub">Converging half-angle: <span id="geoConvAngle">32.0°</span></div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Diffuser Diverging Length ($L_{\text{diff}}$):</span>
+                  <span class="badge badge-prov">260 mm</span>
+                </div>
+                <input type="number" id="geoDiffLen" value="260" step="5" oninput="App.updateGeoParam('diffLen', this.value)">
+                <div class="stat-sub">Diffuser half-angle $\theta_{\text{diff}}$: <span id="geoDiffAngle">34.7°</span></div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Profile Ribs Count:</span>
+                  <span class="badge badge-guide">8 Ribs</span>
+                </div>
+                <select id="geoRibCount" onchange="App.updateGeoParam('ribCount', this.value)">
+                  <option value="6">6 Ribs (60° Spacing)</option>
+                  <option value="8" selected>8 Ribs (45° Spacing - Guide Standard)</option>
+                  <option value="12">12 Ribs (30° Spacing)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="toggle-label">
+                  <input type="checkbox" id="geoDuctsEnabled" onchange="App.updateGeoParam('ductsEnabled', this.checked)">
+                  <span>Enable 4x Boundary Layer Pressure Ducts (Slots)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Aerodynamic Ratios Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Calculated Flow Ratios</h3>
+                <span class="badge badge-calc">Derived</span>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                <div class="stat-card">
+                  <div class="stat-title">Throat Area ($A_t$)</div>
+                  <div class="stat-val" id="statThroatArea">0.071 m²</div>
+                  <div class="stat-sub">706.8 cm²</div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-title">Inlet Ratio</div>
+                  <div class="stat-val" id="statInletRatio">1.78×</div>
+                  <div class="stat-sub">$A_{\text{in}} / A_t$</div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-title">Expansion Ratio</div>
+                  <div class="stat-val" id="statExpansionRatio">4.84×</div>
+                  <div class="stat-sub">$A_{\text{out}} / A_t$</div>
+                </div>
+
+                <div class="stat-card">
+                  <div class="stat-title">Total Length</div>
+                  <div class="stat-val" id="statTotalAxial">340 mm</div>
+                  <div class="stat-sub">$L_{\text{in}} + L_{\text{diff}}$</div>
+                </div>
+              </div>
+
+              <div class="alert-box alert-info" style="margin-top:12px;">
+                <span>💡</span>
+                <div style="font-size:0.75rem;">
+                  <strong>Diffuser Vortex Physics:</strong> In a Brimmed Diffuser (b-DWAT), the radial brim generates low-pressure vortex rings behind the exit, preventing boundary-layer separation even at half-angles near ~34°.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cross-Section Schematic Visualizer -->
+          <div class="card">
+            <div class="card-tape"></div>
+            <div class="card-header">
+              <h3>2D Axial Cross-Section Profile & Flow Geometry</h3>
+              <span class="badge badge-calc">Vector Diagram</span>
+            </div>
+            <div id="svgCrossSectionBox" style="background:#231409; border-radius:10px; border:2px solid var(--kraft-border); padding:10px; overflow-x:auto;">
+              <!-- Dynamic SVG rendered here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: ROTOR DESIGNER & CLEARANCE CHECKER -->
+      <section id="tab-rotor" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>🌀 Rotor Designer & Tip Clearance Checker</h2>
+            <p>
+              Inspect blade count, pitch angle, bottle-cap hub attachment, and resolve the fabrication guide's blade length datum to avoid collision with the 300 mm throat.
+            </p>
+          </div>
+
+          <!-- Conflict Resolution Card -->
+          <div class="card" style="border: 3px solid #f59e0b; background:#fef3c7;">
+            <div class="card-tape"></div>
+            <div class="card-header" style="border-bottom-color: rgba(245, 158, 11, 0.4);">
+              <h3 style="color:#78350f;">
+                <span>⚠️</span>
+                Guide Ambiguity: Stated 145mm Blade vs. 300mm Throat
+              </h3>
+              <span class="badge badge-user">User Selection</span>
+            </div>
+
+            <p style="font-size:0.82rem; color:#451a03; line-height:1.5; margin-bottom:12px; font-weight:600;">
+              The fabrication guide specifies a 145 mm blade length, 300 mm throat ($R = 150\text{ mm}$), and maximum 2 mm clearance, but does not define where blade length is measured from:
+            </p>
+
+            <div class="form-group">
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <label class="tree-item" style="cursor:pointer;" id="labelDatumCenter">
+                  <input type="radio" name="bladeDatumRadio" value="center" onchange="App.setBladeDatumMode('center')">
+                  <div style="margin-left:8px; flex:1;">
+                    <strong>Option A: Measured from Hub Center ($R_{\text{rotor}} = 145\text{ mm}$)</strong>
+                    <div style="font-size:0.75rem; color:#78350f;">
+                      Rotor ⌀ = 290 mm &rarr; Tip clearance = <strong>5.0 mm</strong> (Exceeds guide's 2 mm limit).
+                    </div>
+                  </div>
+                </label>
+
+                <label class="tree-item" style="cursor:pointer;" id="labelDatumEdge">
+                  <input type="radio" name="bladeDatumRadio" value="edge" onchange="App.setBladeDatumMode('edge')">
+                  <div style="margin-left:8px; flex:1;">
+                    <strong style="color:#ef4444;">Option B: Measured from Hub Outer Edge ($R = R_{\text{hub}} + 145\text{ mm}$)</strong>
+                    <div style="font-size:0.75rem; color:#991b1b;">
+                      With 30mm cap ($R=15$), Rotor ⌀ = 320 mm. <strong>SEVERE WALL COLLISION:</strong> Blade is 10 mm larger than the 300 mm throat!
+                    </div>
+                  </div>
+                </label>
+
+                <label class="tree-item selected" style="cursor:pointer;" id="labelDatumClearance">
+                  <input type="radio" name="bladeDatumRadio" value="clearance" checked onchange="App.setBladeDatumMode('clearance')">
+                  <div style="margin-left:8px; flex:1;">
+                    <strong style="color:#059669;">Option C (Recommended): Enforce Target 2.0 mm Tip Clearance</strong>
+                    <div style="font-size:0.75rem; color:#065f46;">
+                      Rotor ⌀ = 296 mm ($R=148\text{ mm}$). With a 30 mm bottle cap ($R=15\text{ mm}$), physical cut blade length = <strong>133.0 mm</strong> (+10mm hub slot tab). Exactly 2.0 mm clearance achieved!
+                    </div>
+                  </div>
+                </label>
+
+                <label class="tree-item" style="cursor:pointer;" id="labelDatumCustom">
+                  <input type="radio" name="bladeDatumRadio" value="custom" onchange="App.setBladeDatumMode('custom')">
+                  <div style="margin-left:8px; flex:1;">
+                    <strong>Option D: Custom Manual Blade Length</strong>
+                    <div style="font-size:0.75rem; color:#5a3820;">
+                      Set arbitrary blade length and hub specs directly below.
+                    </div>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <!-- Rotor Blade Controls -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Rotor Blade Parameters</h3>
+                <span class="badge badge-guide">3 Blades</span>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Blade Count:</span>
+                  <span class="form-val-display" id="dispBladeCount">3</span>
+                </div>
+                <input type="range" id="rotorBladeCountRange" min="2" max="6" value="3" oninput="App.updateRotorParam('bladeCount', this.value)">
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Physical Blade Cut Length:</span>
+                  <span class="badge badge-calc" id="badgeBladeLengthType">Calculated</span>
+                </div>
+                <input type="number" id="rotorBladeLengthInput" value="133" step="1" oninput="App.updateRotorParam('bladeLength', this.value)">
+                <div class="stat-sub">+ 10 mm root tab for slot insertion inside bottle cap</div>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Blade Pitch Angle:</span>
+                  <span class="badge badge-guide">15° Pitch</span>
+                </div>
+                <input type="number" id="rotorPitchInput" value="15" step="1" min="5" max="45" oninput="App.updateRotorParam('pitchAngle', this.value)">
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Root Chord ($C_{\text{root}}$):</label>
+                  <input type="number" id="rotorRootChordInput" value="38" step="1" oninput="App.updateRotorParam('rootChord', this.value)">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Tip Chord ($C_{\text{tip}}$):</label>
+                  <input type="number" id="rotorTipChordInput" value="22" step="1" oninput="App.updateRotorParam('tipChord', this.value)">
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottle Cap Hub & Motor Axle -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Hub, Axle & Motor Cradle</h3>
+                <span class="badge badge-prov">Hardware</span>
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Bottle Cap Hub ⌀:</span>
+                  <span class="form-val-display" id="dispHubDia">30 mm</span>
+                </div>
+                <input type="number" id="rotorHubDiaInput" value="30" step="1" oninput="App.updateRotorParam('hubDia', this.value)">
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Hub Depth / Thickness:</span>
+                  <span class="form-val-display" id="dispHubThick">12 mm</span>
+                </div>
+                <input type="number" id="rotorHubThickInput" value="12" step="1" oninput="App.updateRotorParam('hubThick', this.value)">
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">Wooden Skewer Axle ⌀:</span>
+                  <span class="badge badge-guide">3 mm</span>
+                </div>
+                <input type="number" id="rotorAxleDiaInput" value="3.0" step="0.5" oninput="App.updateRotorParam('axleDia', this.value)">
+              </div>
+
+              <div class="form-group">
+                <div class="form-label-row">
+                  <span class="form-label">12V DC Motor Diameter:</span>
+                  <span class="badge badge-prov">24 mm</span>
+                </div>
+                <input type="number" id="rotorMotorDiaInput" value="24" step="1" oninput="App.updateRotorParam('motorDia', this.value)">
+                <div class="stat-sub">Length: 30 mm | Central toy motor / stepper</div>
+              </div>
+            </div>
+
+            <!-- Clearance Status Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Radial Tip Clearance Status</h3>
+                <span class="badge badge-calc" id="badgeClearanceStatus">Optimal</span>
+              </div>
+
+              <div class="stat-card" style="margin-bottom:12px;">
+                <div class="stat-title">Calculated Tip Clearance ($c$)</div>
+                <div class="stat-val" id="statTipClearance" style="color:#059669;">2.0 mm</div>
+                <div class="stat-sub">$c = (D_{\text{throat}} - D_{\text{rotor}}) / 2$ | Max Guide: 2.0 mm</div>
+              </div>
+
+              <div class="stat-card" style="margin-bottom:12px;">
+                <div class="stat-title">Rotor Swept ⌀</div>
+                <div class="stat-val" id="statRotorDia">296.0 mm</div>
+                <div class="stat-sub">Throat internal ⌀: 300.0 mm</div>
+              </div>
+
+              <div id="clearanceDiagnosticMsg" class="alert-box alert-success">
+                <span>✅</span>
+                <div style="font-size:0.75rem;">
+                  <strong>Clearance Compliant:</strong> 2.0 mm radial gap prevents cardboard rubbing while preventing high-pressure air bypass leakage.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Rotor Vector Diagram -->
+          <div class="card">
+            <div class="card-tape"></div>
+            <div class="card-header">
+              <h3>Rotor Inflow Face Geometry & Tip Clearance Gap Diagram</h3>
+              <span class="badge badge-calc">Scaled Preview</span>
+            </div>
+            <div id="svgRotorPreviewBox" style="background:#231409; border-radius:10px; border:2px solid var(--kraft-border); padding:12px; text-align:center; overflow-x:auto;">
+              <!-- Dynamic SVG -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: COMPONENT TREE & DATUMS -->
+      <section id="tab-assembly-tree" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>🧩 12 Core Assembly Components & Datums</h2>
+            <p>
+              Toggle component visibility in the 3D viewer, inspect their materials, and examine their Cartesian coordinate reference datums.
+            </p>
+          </div>
+
+          <div class="grid-3">
+            <div class="card" style="grid-column: span 2;">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Turbine Components Hierarchy</h3>
+                <span class="badge badge-user">Visibility Toggles</span>
+              </div>
+
+              <div id="assemblyTreeContainer">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Reference Datums</h3>
+                <span class="badge badge-calc">Cartesian</span>
+              </div>
+
+              <table class="cad-table">
+                <tbody>
+                  <tr>
+                    <td><strong>Inlet Datum ($Z_0$)</strong></td>
+                    <td>$Z = 0.0$ mm</td>
+                    <td>Inflow intake bell plane</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Throat Datum ($Z_t$)</strong></td>
+                    <td id="datumThroatZ">$Z = 80.0$ mm</td>
+                    <td>Minimum area / Rotor plane</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Diffuser Outlet ($Z_{\text{out}}$)</strong></td>
+                    <td id="datumOutletZ">$Z = 340.0$ mm</td>
+                    <td>Maximum diffuser expansion</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Brim Flange Plane</strong></td>
+                    <td id="datumBrimZ">$Z = 340.0$ mm</td>
+                    <td>Perpendicular ring at exit</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Turbine Centerline</strong></td>
+                    <td>$X = 0, Y = 0$</td>
+                    <td>Motor shaft & rotor axis</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Ground Base Plane</strong></td>
+                    <td id="datumGroundY">$Y = -280.0$ mm</td>
+                    <td>Cardboard stand bottom</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: CUT LIST & SHEET NESTING -->
+      <section id="tab-cutlist" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>✂️ Cardboard Fabrication Planner & Cut List</h2>
+            <p>
+              Complete list of all cardboard pieces, PVC liner, and wooden skewers needed to build the model at <span id="cutListScaleFactorSpan" style="font-weight:900; color:#0284c7;">100.0%</span> scale.
+            </p>
+          </div>
+
+          <!-- Cut List Table Card -->
+          <div class="card">
+            <div class="card-tape"></div>
+            <div class="card-header">
+              <h3>Itemized Fabrication Cut List</h3>
+              <button class="btn btn-sm btn-primary" onclick="App.exportCutListCSV()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export CSV
+              </button>
+            </div>
+
+            <div style="overflow-x:auto;">
+              <table class="cad-table" id="cutListTable">
+                <thead>
+                  <tr>
+                    <th>Item #</th>
+                    <th>Part Name</th>
+                    <th>Material</th>
+                    <th>Qty</th>
+                    <th>Cut Dimensions (L × W)</th>
+                    <th>Thickness</th>
+                    <th>Profile Shape</th>
+                    <th>Fabrication Notes</th>
+                  </tr>
+                </thead>
+                <tbody id="cutListTableBody">
+                  <!-- Generated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Sheet Nesting Card -->
+          <div class="card">
+            <div class="card-tape"></div>
+            <div class="card-header">
+              <h3>2D Material Sheet Nesting & Waste Minimizer</h3>
+              <span class="badge badge-calc">Sheet Packing</span>
+            </div>
+
+            <div class="form-row" style="margin-bottom:12px;">
+              <div class="form-group">
+                <label class="form-label">Cardboard Sheet Size (mm):</label>
+                <div style="display:flex; gap:6px;">
+                  <input type="number" id="nestCardWidth" value="1000" step="50" onchange="App.updateNesting()">
+                  <span style="align-self:center; color:#5a3820; font-weight:800;">×</span>
+                  <input type="number" id="nestCardHeight" value="700" step="50" onchange="App.updateNesting()">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">PVC File Sheet Size (mm):</label>
+                <div style="display:flex; gap:6px;">
+                  <input type="number" id="nestPvcWidth" value="1000" step="50" onchange="App.updateNesting()">
+                  <span style="align-self:center; color:#5a3820; font-weight:800;">×</span>
+                  <input type="number" id="nestPvcHeight" value="500" step="50" onchange="App.updateNesting()">
+                </div>
+              </div>
+            </div>
+
+            <!-- Nesting Canvas Box -->
+            <div style="background:#231409; border:2px solid var(--kraft-border); border-radius:10px; padding:12px; overflow-x:auto; text-align:center;">
+              <div id="nestingSvgContainer">
+                <!-- Rendered nested sheet layout -->
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-around; margin-top:12px; font-size:0.8rem; font-weight:800; color:#5a3820;">
+              <div>Cardboard Sheets: <strong style="color:#0284c7;">2 Sheets</strong></div>
+              <div>Estimated Cardboard Utilization: <strong style="color:#059669;">~72%</strong></div>
+              <div>PVC Sheets: <strong style="color:#0284c7;">1 Sheet</strong></div>
+              <div>Scrap / Trim: <strong style="color:#d97706;">~28%</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: PRINTABLE 1:1 TEMPLATES -->
+      <section id="tab-templates" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>🖨️ Workshop Drawings & 1:1 Printable Patterns</h2>
+            <p>
+              Print these templates directly on standard A4 or Letter sheets. Check the 100 mm calibration test bar with a physical ruler before cutting your cardboard.
+            </p>
+            <div class="alert-box alert-warning" style="margin-top:10px;">
+              <div style="font-size:1.4rem;">⚠️</div>
+              <div>
+                <strong>CRITICAL PRINTING NOTICE:</strong>
+                <div>In your browser print dialog, select <strong>Scale: 100% / "Actual Size"</strong>. Do NOT use "Fit to Page" or "Scale to fit"!</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top:12px;" onclick="App.printDrawings()">
+              🖨️ Print All Patterns Now (Ctrl + P)
+            </button>
+          </div>
+
+          <!-- Calibration Bar Card -->
+          <div class="template-card">
+            <h4>100 mm Calibration Check Ruler</h4>
+            <p>Measure this printed bar with a physical metric ruler. It must measure exactly 100.0 mm (10.0 cm).</p>
+            <div class="calibration-bar"></div>
+            <div style="font-size:0.75rem; font-weight:800; font-family:var(--font-mono);">0 mm &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 50 mm &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; 100 mm</div>
+          </div>
+
+          <!-- Pattern 1: Profile Rib -->
+          <div class="template-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4>Pattern 1: Profile Rib (Cut 8 from Corrugated Cardboard)</h4>
+                <p>Inner edge matches diffuser flow curve; includes throat locking notch & 3 mm axle hole.</p>
+              </div>
+              <button class="btn btn-sm btn-accent" onclick="App.downloadTemplateSVG('templateRibSvg', 'rib-profile-template.svg')">Download SVG</button>
+            </div>
+            <div id="templateRibBox" style="border:2px dashed #cbd5e1; border-radius:8px; padding:10px; text-align:center;">
+              <!-- Dynamic SVG -->
+            </div>
+          </div>
+
+          <!-- Pattern 2: Rotor Blade -->
+          <div class="template-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4>Pattern 2: Rotor Blade (Cut 3 from Stiff Cardboard / Plastic)</h4>
+                <p>Features 15° pitch alignment line, root chord, tip chord, and 10 mm slot attachment tab.</p>
+              </div>
+              <button class="btn btn-sm btn-accent" onclick="App.downloadTemplateSVG('templateBladeSvg', 'rotor-blade-template.svg')">Download SVG</button>
+            </div>
+            <div id="templateBladeBox" style="border:2px dashed #cbd5e1; border-radius:8px; padding:10px; text-align:center;">
+              <!-- Dynamic SVG -->
+            </div>
+          </div>
+
+          <!-- Pattern 3: Throat Ring Strip -->
+          <div class="template-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4>Pattern 3: Throat Ring Strip Pattern</h4>
+                <p>Flat strip length = Mathematical Circumference (π × D) + 20mm Seam Lap. Has 8 notch tick marks for ribs.</p>
+              </div>
+              <button class="btn btn-sm btn-accent" onclick="App.downloadTemplateSVG('templateThroatSvg', 'throat-strip-template.svg')">Download SVG</button>
+            </div>
+            <div id="templateThroatBox" style="border:2px dashed #cbd5e1; border-radius:8px; padding:10px; text-align:center;">
+              <!-- Dynamic SVG -->
+            </div>
+          </div>
+
+          <!-- Pattern 4: Conical Liner Flat Development -->
+          <div class="template-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4>Pattern 4: Flexible Inner Liner Flat Developed Sector (Cut 2 Halves)</h4>
+                <p>Developed conical frustum sector for smooth PVC liner.</p>
+              </div>
+              <button class="btn btn-sm btn-accent" onclick="App.downloadTemplateSVG('templateLinerSvg', 'diffuser-liner-developed.svg')">Download SVG</button>
+            </div>
+            <div id="templateLinerBox" style="border:2px dashed #cbd5e1; border-radius:8px; padding:10px; text-align:center;">
+              <!-- Dynamic SVG -->
+            </div>
+          </div>
+
+          <!-- Pattern 5: Brim Quadrant Sectors -->
+          <div class="template-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <h4>Pattern 5: Brim Flange Quadrant Sectors (Cut 4 from Cardboard)</h4>
+                <p>Outer ⌀ 780mm, inner ⌀ 660mm. Four 90° arc sectors with lap joint tabs.</p>
+              </div>
+              <button class="btn btn-sm btn-accent" onclick="App.downloadTemplateSVG('templateBrimSvg', 'brim-sectors-template.svg')">Download SVG</button>
+            </div>
+            <div id="templateBrimBox" style="border:2px dashed #cbd5e1; border-radius:8px; padding:10px; text-align:center;">
+              <!-- Dynamic SVG -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 7: MATERIAL & BUDGET CALCULATOR -->
+      <section id="tab-budget" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>💰 Material Inventory & Reference Budget (₹405 Baseline)</h2>
+            <p>
+              Tracks material costs, distinguishes between household scrap items (₹0) and items to purchase, and calculates savings against the ₹405 reference guide total.
+            </p>
+          </div>
+
+          <div class="grid-3">
+            <div class="card" style="grid-column: span 2;">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Material Items & Costs</h3>
+                <button class="btn btn-sm btn-primary" onclick="App.addBudgetItemPrompt()">+ Add Custom Material</button>
+              </div>
+
+              <div style="overflow-x:auto;">
+                <table class="cad-table" id="budgetTable">
+                  <thead>
+                    <tr>
+                      <th>Material Item</th>
+                      <th>Category</th>
+                      <th>Acquisition</th>
+                      <th>Qty</th>
+                      <th>Unit Cost (₹)</th>
+                      <th>Subtotal (₹)</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="budgetTableBody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Budget Summary Card -->
+            <div class="card">
+              <div class="card-tape"></div>
+              <div class="card-header">
+                <h3>Budget Summary</h3>
+                <span class="badge badge-calc">Live Total</span>
+              </div>
+
+              <div class="stat-card" style="margin-bottom:12px;">
+                <div class="stat-title">Estimated Project Total</div>
+                <div class="stat-val" id="budgetTotalCostDisplay">₹405.00</div>
+                <div class="stat-sub">Reference Guide Baseline: ₹405.00</div>
+              </div>
+
+              <div class="stat-card" style="margin-bottom:12px;">
+                <div class="stat-title">Difference from Guide</div>
+                <div class="stat-val" id="budgetVarianceDisplay" style="color:#059669;">₹0.00 (0%)</div>
+                <div class="stat-sub" id="budgetVarianceSub">Exactly on baseline target</div>
+              </div>
+
+              <button class="btn btn-sm btn-accent" style="width:100%;" onclick="App.resetBudgetToBaseline()">
+                Restore Baseline ₹405 Budget
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 8: DESIGN WARNINGS & CONFLICT CHECKER -->
+      <section id="tab-warnings" class="tab-content">
+        <div class="full-section">
+          <div class="section-hero">
+            <div class="card-tape"></div>
+            <h2>⚠️ Design Warnings & Mechanical Validation</h2>
+            <p>
+              Live constraint validator checking for blade wall collisions, clearance tolerances, and aerodynamic feasibility.
+            </p>
+          </div>
+
+          <div id="diagnosticsListContainer" style="display:flex; flex-direction:column; gap:12px;">
+            <!-- Dynamically generated -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RESET CONFIRMATION MODAL -->
+    <div class="modal-backdrop" id="resetModal">
+      <div class="modal-window">
+        <h3 style="font-size:1.15rem; margin-bottom:8px; color:#b91c1c;">Reset Design to Guide Baseline?</h3>
+        <p style="font-size:0.85rem; color:#5a3820; line-height:1.5; margin-bottom:18px; font-weight:600;">
+          This will restore all dimensions, scale factor, and blade settings back to the 100% baseline specifications (300mm throat, 400mm inlet, 660mm outlet, 8 ribs, 3 blades).
+        </p>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button class="btn" onclick="document.getElementById('resetModal').classList.remove('open')">Cancel</button>
+          <button class="btn btn-danger" onclick="App.executeReset()">Yes, Restore Baseline</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VANILLA JAVASCRIPT MASTER ENGINE WITH INTERACTIVE 3D VIEWER -->
+    <script>
+      /**
+       * b-DWAT / WindLens Cardboard Workshop & 3D Visualizer
+       * Self-contained, offline-first client application.
+       */
+      const App = (function() {
+        // --- 1. BASELINE SPECIFICATIONS ---
+        const BASELINE = {
+          throatDia: 300.0,
+          inletDia: 400.0,
+          outletDia: 660.0,
+          statedBladeLength: 145.0,
+          statedPitch: 15.0,
+          statedMaxClearance: 2.0,
+          ribCount: 8,
+          bladeCount: 3,
+          skewerDia: 3.0,
+          pvcThickness: 0.8,
+          inletLen: 80.0,
+          diffLen: 260.0,
+          brimHeight: 60.0,
+          hubDia: 30.0,
+          hubThick: 12.0,
+          bladeRootChord: 38.0,
+          bladeTipChord: 22.0,
+          motorDia: 24.0,
+          motorLen: 30.0,
+          cardboardThickness: 3.0,
+          seamOverlap: 20.0,
+          standHeight: 220.0,
+          ductsEnabled: false,
+          bladeDatumMode: 'clearance',
+          activeBladeLength: 133.0,
+
+          budgetItems: [
+            { id: 1, name: "Thick Corrugated Cardboard", cat: "Structural", isScrap: true, qty: "Carton scrap", unitCost: 0, subtotal: 0, notes: "Recycled 3-ply carton" },
+            { id: 2, name: "Flexible PVC / File Sheet", cat: "Aerodynamic", isScrap: false, qty: "1 Sheet", unitCost: 40, subtotal: 40, notes: "0.8 - 1.0 mm smooth liner" },
+            { id: 3, name: "Wall Putty", cat: "Finishing", isScrap: false, qty: "1 Pack", unitCost: 35, subtotal: 35, notes: "Seam smoother" },
+            { id: 4, name: "Sandpaper (Assorted grits)", cat: "Finishing", isScrap: false, qty: "2 Sheets", unitCost: 10, subtotal: 20, notes: "Surface prep" },
+            { id: 5, name: "Metallic Spray Paint", cat: "Finishing", isScrap: false, qty: "1 Can", unitCost: 180, subtotal: 180, notes: "Weatherproof coat" },
+            { id: 6, name: "Adhesives (Fevicol / Hot Glue)", cat: "Joining", isScrap: false, qty: "1 Kit", unitCost: 55, subtotal: 55, notes: "Cardboard bonding" },
+            { id: 7, name: "12V DC Toy Motor / Generator", cat: "Electrical", isScrap: false, qty: "1 Unit", unitCost: 60, subtotal: 60, notes: "Center shaft generator" },
+            { id: 8, name: "5mm LED + 100Ω Resistor + Wire", cat: "Electrical", isScrap: false, qty: "1 Set", unitCost: 15, subtotal: 15, notes: "Power indicator" }
+          ]
+        };
+
+        // --- 2. ACTIVE STATE ---
+        let state = {
+          unit: 'mm',
+          scaleFactor: 1.0,
+          lockHardware: true,
+          roundToNearestMm: true,
+          viewMode: 'iso',
+          explodedDist: 70,
+          cutaway: false,
+          showDimensions: true,
+          wireframe: false,
+
+          // 3D Turbine Spin Simulation State
+          isSpinning: false,
+          rotorAngle: 0, // radians
+          windSpeed: 5.0, // m/s
+          rpm: 340,
+          lastFrameTime: performance.now(),
+          windRibbons: [], // animated wind gust particles
+
+          // 3D Procedural Fly-In Assembly Animation State
+          assemblyAnim: {
+            active: false,
+            progress: 1.0, // 0.0 = exploded in space, 1.0 = fully assembled
+            startTime: 0,
+            duration: 4200, // 4.2 seconds
+            celebrating: false,
+            celebrateTimer: 0,
+            confetti: []
+          },
+
+          geo: JSON.parse(JSON.stringify(BASELINE)),
+
+          visibility: {
+            base: true,
+            throatRing: true,
+            ribs: true,
+            liner: true,
+            inletBell: true,
+            diffuserCone: true,
+            brim: true,
+            struts: true,
+            hub: true,
+            blades: true,
+            motor: true,
+            circuit: true,
+            ducts: true
+          },
+
+          camera: {
+            rotX: -0.42,
+            rotY: 0.65,
+            zoom: 1.0,
+            panX: 0,
+            panY: 0,
+            isDragging: false,
+            isPanning: false,
+            lastMouseX: 0,
+            lastMouseY: 0
+          }
+        };
+
+        let canvas, ctx;
+        let animFrameId = null;
+
+        // --- 3. FORMATTING HELPERS (FIXED INPUT BINDINGS & NAN GUARDS) ---
+        function formatDim(mmVal, showUnit = true) {
+          if (mmVal === null || mmVal === undefined || isNaN(mmVal)) return '-';
+          let val = Number(mmVal);
+          if (state.roundToNearestMm && state.unit === 'mm') {
+            val = Math.round(val);
+          }
+          if (state.unit === 'cm') {
+            val = (val / 10).toFixed(state.roundToNearestMm ? 1 : 2);
+            return showUnit ? `${val} cm` : val;
+          }
+          return showUnit ? `${val.toFixed(state.roundToNearestMm ? 0 : 1)} mm` : val;
+        }
+
+        // Safe DOM updates
+        function safeSetText(id, txt) {
+          const el = document.getElementById(id);
+          if (el) el.innerText = txt;
+        }
+        function safeSetValue(id, val) {
+          const el = document.getElementById(id);
+          if (el) el.value = val;
+        }
+
+        // --- 4. INITIALIZATION ---
+        function init() {
+          canvas = document.getElementById('cadCanvas');
+          if (canvas) {
+            ctx = canvas.getContext('2d');
+            setupCanvasInteractions();
+            window.addEventListener('resize', handleResize);
+            handleResize();
+          }
+
+          // Generate initial cartoon wind ribbons
+          initWindRibbons();
+
+          recalculateModel();
+          renderAssemblyTree();
+          renderBudgetTable();
+          renderCutList();
+          renderPrintTemplates();
+          renderDiagnostics();
+          drawCurrentView();
+
+          // Start main animation loop
+          requestAnimationFrame(animationLoop);
+        }
+
+        function initWindRibbons() {
+          state.windRibbons = [];
+          for (let i = 0; i < 18; i++) {
+            state.windRibbons.push({
+              x: (Math.random() - 0.5) * 160,
+              y: (Math.random() - 0.5) * 160,
+              z: -180 - Math.random() * 200,
+              speed: 2 + Math.random() * 2,
+              len: 30 + Math.random() * 40
+            });
+          }
+        }
+
+        function handleResize() {
+          if (!canvas) return;
+          const container = document.getElementById('canvasBox');
+          if (!container) return;
+
+          const rect = container.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          canvas.width = Math.max(300, rect.width) * dpr;
+          canvas.height = Math.max(300, rect.height) * dpr;
+          drawCurrentView();
+        }
+
+        function setupCanvasInteractions() {
+          const container = document.getElementById('canvasBox');
+          if (!container) return;
+
+          container.addEventListener('mousedown', function(e) {
+            state.camera.isDragging = (e.button === 0 && !e.shiftKey);
+            state.camera.isPanning = (e.button === 2 || (e.button === 0 && e.shiftKey));
+            state.camera.lastMouseX = e.clientX;
+            state.camera.lastMouseY = e.clientY;
+          });
+
+          window.addEventListener('mousemove', function(e) {
+            if (!state.camera.isDragging && !state.camera.isPanning) return;
+            const dx = e.clientX - state.camera.lastMouseX;
+            const dy = e.clientY - state.camera.lastMouseY;
+            state.camera.lastMouseX = e.clientX;
+            state.camera.lastMouseY = e.clientY;
+
+            if (state.camera.isDragging) {
+              if (state.viewMode === 'iso' || state.viewMode === 'exploded') {
+                state.camera.rotY += dx * 0.008;
+                state.camera.rotX += dy * 0.008;
+                state.camera.rotX = Math.max(-Math.PI / 2 + 0.05, Math.min(Math.PI / 2 - 0.05, state.camera.rotX));
+              } else {
+                state.camera.panX += dx;
+                state.camera.panY += dy;
+              }
+              drawCurrentView();
+            } else if (state.camera.isPanning) {
+              state.camera.panX += dx;
+              state.camera.panY += dy;
+              drawCurrentView();
+            }
+          });
+
+          window.addEventListener('mouseup', function() {
+            state.camera.isDragging = false;
+            state.camera.isPanning = false;
+          });
+
+          container.addEventListener('contextmenu', e => e.preventDefault());
+
+          container.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            const factor = e.deltaY < 0 ? 1.08 : 0.92;
+            state.camera.zoom = Math.max(0.25, Math.min(6.0, state.camera.zoom * factor));
+            drawCurrentView();
+          }, { passive: false });
+        }
+
+        // --- 5. PARAMETRIC RECALCULATION ENGINE ---
+        function recalculateModel() {
+          const s = state.scaleFactor;
+          const g = state.geo;
+
+          g.currentInletDia = g.inletDia * s;
+          g.currentThroatDia = g.throatDia * s;
+          g.currentOutletDia = g.outletDia * s;
+          g.currentInletLen = g.inletLen * s;
+          g.currentDiffLen = g.diffLen * s;
+          g.currentBrimHeight = g.brimHeight * s;
+          g.currentTotalBrimDia = g.currentOutletDia + (2 * g.currentBrimHeight);
+
+          g.currentHubDia = state.lockHardware ? g.hubDia : g.hubDia * s;
+          g.currentHubThick = state.lockHardware ? g.hubThick : g.hubThick * s;
+          g.currentSkewerDia = state.lockHardware ? g.skewerDia : g.skewerDia * s;
+          g.currentMotorDia = state.lockHardware ? g.motorDia : g.motorDia * s;
+          g.currentMotorLen = state.lockHardware ? g.motorLen : g.motorLen * s;
+          g.currentCardboardThick = g.cardboardThickness;
+
+          const throatR = g.currentThroatDia / 2;
+          const hubR = g.currentHubDia / 2;
+
+          if (g.bladeDatumMode === 'clearance') {
+            const targetClearance = state.lockHardware ? BASELINE.statedMaxClearance : BASELINE.statedMaxClearance * s;
+            g.currentTipClearance = targetClearance;
+            g.currentRotorRadius = throatR - g.currentTipClearance;
+            g.currentRotorDia = g.currentRotorRadius * 2;
+            g.activeBladeLength = g.currentRotorRadius - hubR;
+          } else if (g.bladeDatumMode === 'center') {
+            const nominalBlade = g.statedBladeLength * s;
+            g.currentRotorRadius = nominalBlade;
+            g.currentRotorDia = g.currentRotorRadius * 2;
+            g.activeBladeLength = nominalBlade - hubR;
+            g.currentTipClearance = (g.currentThroatDia - g.currentRotorDia) / 2;
+          } else if (g.bladeDatumMode === 'edge') {
+            const nominalBlade = g.statedBladeLength * s;
+            g.activeBladeLength = nominalBlade;
+            g.currentRotorRadius = hubR + nominalBlade;
+            g.currentRotorDia = g.currentRotorRadius * 2;
+            g.currentTipClearance = (g.currentThroatDia - g.currentRotorDia) / 2;
+          } else {
+            g.currentRotorRadius = hubR + (g.activeBladeLength * s);
+            g.currentRotorDia = g.currentRotorRadius * 2;
+            g.currentTipClearance = (g.currentThroatDia - g.currentRotorDia) / 2;
+          }
+
+          // Aerodynamic areas
+          g.throatArea = (Math.PI / 4) * Math.pow(g.currentThroatDia / 1000, 2);
+          g.inletArea = (Math.PI / 4) * Math.pow(g.currentInletDia / 1000, 2);
+          g.outletArea = (Math.PI / 4) * Math.pow(g.currentOutletDia / 1000, 2);
+          g.inletAreaRatio = g.inletArea / g.throatArea;
+          g.outletAreaRatio = g.outletArea / g.throatArea;
+
+          g.convHalfAngle = Math.atan(((g.currentInletDia - g.currentThroatDia) / 2) / g.currentInletLen) * (180 / Math.PI);
+          g.diffHalfAngle = Math.atan(((g.currentOutletDia - g.currentThroatDia) / 2) / g.currentDiffLen) * (180 / Math.PI);
+          g.totalAxialLength = g.currentInletLen + g.currentDiffLen;
+          g.throatCircExact = Math.PI * g.currentThroatDia;
+
+          // Estimate RPM based on wind speed and Tip Speed Ratio (TSR ≈ 4 for b-DWAT)
+          const tsr = 4.2;
+          const rotorDiaM = g.currentRotorDia / 1000;
+          if (rotorDiaM > 0.01) {
+            state.rpm = Math.round((tsr * state.windSpeed * 60) / (Math.PI * rotorDiaM));
+          }
+
+          updateUIElements();
+        }
+
+        // --- 6. UI SYNCHRONIZATION ---
+        function updateUIElements() {
+          const g = state.geo;
+
+          safeSetText('hudScale', `${(state.scaleFactor * 100).toFixed(1)}%`);
+          safeSetText('hudMode', getModeLabel(state.viewMode));
+          safeSetText('hudThroat', formatDim(g.currentThroatDia));
+          safeSetText('hudClearance', formatDim(g.currentTipClearance));
+
+          safeSetText('dispScaleFactor', `${state.scaleFactor.toFixed(3)}× (${(state.scaleFactor * 100).toFixed(1)}%)`);
+          safeSetValue('inputTargetThroat', Math.round(g.currentThroatDia));
+          // Fixed input binding: dispThroatCirc is an input, use safeSetValue!
+          safeSetValue('dispThroatCirc', formatDim(g.throatCircExact));
+
+          safeSetText('quickInletVal', formatDim(g.currentInletDia));
+          safeSetText('quickThroatVal', formatDim(g.currentThroatDia));
+          safeSetText('quickOutletVal', formatDim(g.currentOutletDia));
+          safeSetText('quickBrimVal', formatDim(g.currentTotalBrimDia));
+          safeSetText('quickRotorVal', formatDim(g.currentRotorDia));
+          safeSetText('quickClearanceVal', formatDim(g.currentTipClearance));
+
+          const clrElem = document.getElementById('quickClearanceVal');
+          if (clrElem) {
+            clrElem.style.color = (g.currentTipClearance <= 0) ? '#ef4444' : (g.currentTipClearance > 2.5 ? '#d97706' : '#059669');
+          }
+
+          safeSetText('geoInletRadius', formatDim(g.currentInletDia / 2));
+          safeSetText('geoThroatRadius', formatDim(g.currentThroatDia / 2));
+          safeSetText('geoOutletRadius', formatDim(g.currentOutletDia / 2));
+          safeSetText('geoTotalBrimDia', formatDim(g.currentTotalBrimDia));
+          safeSetText('geoConvAngle', `${g.convHalfAngle.toFixed(1)}°`);
+          safeSetText('geoDiffAngle', `${g.diffHalfAngle.toFixed(1)}°`);
+          safeSetText('statThroatArea', `${g.throatArea.toFixed(3)} m²`);
+          safeSetText('statInletRatio', `${g.inletAreaRatio.toFixed(2)}×`);
+          safeSetText('statExpansionRatio', `${g.outletAreaRatio.toFixed(2)}×`);
+          safeSetText('statTotalAxial', formatDim(g.totalAxialLength));
+
+          safeSetText('dispBladeCount', g.bladeCount);
+          safeSetValue('rotorBladeLengthInput', Math.round(g.activeBladeLength));
+          safeSetValue('rotorPitchInput', g.statedPitch);
+          safeSetText('dispHubDia', formatDim(g.currentHubDia));
+          safeSetText('dispHubThick', formatDim(g.currentHubThick));
+          safeSetText('statTipClearance', formatDim(g.currentTipClearance));
+          safeSetText('statRotorDia', formatDim(g.currentRotorDia));
+          safeSetText('navClearanceBadge', formatDim(g.currentTipClearance));
+
+          safeSetText('datumThroatZ', `Z = ${formatDim(g.currentInletLen)}`);
+          safeSetText('datumOutletZ', `Z = ${formatDim(g.totalAxialLength)}`);
+          safeSetText('datumBrimZ', `Z = ${formatDim(g.totalAxialLength)}`);
+          safeSetText('datumGroundY', `Y = -${formatDim((g.currentTotalBrimDia / 2) + 20)}`);
+          safeSetText('cutListScaleFactorSpan', `${(state.scaleFactor * 100).toFixed(1)}%`);
+
+          safeSetText('dispRpmVal', state.isSpinning ? state.rpm : 0);
+
+          updateClearanceBanner();
+          renderSvgCrossSection();
+          renderSvgRotorPreview();
+        }
+
+        function updateClearanceBanner() {
+          const g = state.geo;
+          const banner = document.getElementById('conflictAlertCard');
+          const bannerText = document.getElementById('conflictAlertText');
+          const diagBox = document.getElementById('clearanceDiagnosticMsg');
+          const badgeStatus = document.getElementById('badgeClearanceStatus');
+
+          if (!banner || !bannerText) return;
+
+          if (g.currentTipClearance <= 0) {
+            banner.style.borderColor = '#ef4444';
+            banner.style.background = '#fee2e2';
+            bannerText.innerHTML = `<strong style="color:#b91c1c;">CRITICAL COLLISION:</strong> Rotor ⌀ (${formatDim(g.currentRotorDia)}) exceeds throat ⌀ (${formatDim(g.currentThroatDia)}). Rotor crashes into cardboard wall by ${formatDim(Math.abs(g.currentTipClearance) * 2)}!`;
+            if (diagBox) {
+              diagBox.className = 'alert-box alert-danger';
+              diagBox.innerHTML = `<span>❌</span><div><strong>ROTOR COLLISION:</strong> Negative clearance (${formatDim(g.currentTipClearance)}). Reduce blade length immediately!</div>`;
+            }
+            if (badgeStatus) {
+              badgeStatus.className = 'badge badge-user';
+              badgeStatus.style.background = '#ef4444';
+              badgeStatus.style.color = '#fff';
+              badgeStatus.innerText = 'COLLISION';
+            }
+          } else if (g.currentTipClearance > 2.5) {
+            banner.style.borderColor = '#f59e0b';
+            banner.style.background = '#fef3c7';
+            bannerText.innerHTML = `<strong>Clearance Exceeds 2 mm:</strong> Radial gap is ${formatDim(g.currentTipClearance)}, exceeding the 2.0 mm limit from the guide.`;
+            if (diagBox) {
+              diagBox.className = 'alert-box alert-warning';
+              diagBox.innerHTML = `<span>⚠️</span><div><strong>CLEARANCE &gt; 2 MM:</strong> Current gap is ${formatDim(g.currentTipClearance)}. Switch to Option C to lock 2.0 mm.</div>`;
+            }
+            if (badgeStatus) {
+              badgeStatus.className = 'badge badge-user';
+              badgeStatus.innerText = 'EXCEEDS GUIDE';
+            }
+          } else {
+            banner.style.borderColor = '#10b981';
+            banner.style.background = '#d1fae5';
+            bannerText.innerHTML = `<strong style="color:#065f46;">Clearance Compliant (2.0 mm):</strong> Rotor is sized with exact 2 mm gap inside 300 mm throat.`;
+            if (diagBox) {
+              diagBox.className = 'alert-box alert-success';
+              diagBox.innerHTML = `<span>✅</span><div><strong>OPTIMAL 2.0 MM GAP:</strong> Complies with fabrication guide specification.</div>`;
+            }
+            if (badgeStatus) {
+              badgeStatus.className = 'badge badge-calc';
+              badgeStatus.innerText = 'OPTIMAL (2 mm)';
+            }
+          }
+        }
+
+        function getModeLabel(m) {
+          switch (m) {
+            case 'iso': return '3D Perspective';
+            case 'side': return 'Side Elevation Section';
+            case 'front': return 'Front Elevation Inflow';
+            case 'top': return 'Top Plan View';
+            case 'exploded': return 'Exploded 3D Assembly';
+            default: return m;
+          }
+        }
+
+        // --- 7. PROCEDURAL EASING & ANIMATION HELPERS ---
+        function getStageProgress(T, tStart, tEnd) {
+          if (T <= tStart) return 0;
+          if (T >= tEnd) return 1;
+          const p = (T - tStart) / (tEnd - tStart);
+          return 1 - Math.pow(1 - p, 3); // Cubic ease out
+        }
+
+        function getBounceProgress(T, tStart, tEnd) {
+          if (T <= tStart) return 0;
+          if (T >= tEnd) return 1;
+          const p = (T - tStart) / (tEnd - tStart);
+          // Ease-out with slight cardboard snap bounce
+          const c1 = 1.5;
+          const c3 = c1 + 1;
+          return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2);
+        }
+
+        function showAssemblyToast(msg) {
+          const t = document.getElementById('assemblyToast');
+          const txt = document.getElementById('assemblyToastText');
+          if (t && txt) {
+            txt.innerText = msg;
+            t.classList.add('show');
+          }
+        }
+
+        function hideAssemblyToast() {
+          const t = document.getElementById('assemblyToast');
+          if (t) t.classList.remove('show');
+        }
+
+        function spawnConfetti() {
+          state.assemblyAnim.confetti = [];
+          const colors = ['#f59e0b', '#0284c7', '#10b981', '#ef4444', '#facc15', '#dfa97b', '#c084fc'];
+          for (let i = 0; i < 40; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 2 + Math.random() * 6;
+            state.assemblyAnim.confetti.push({
+              x: (Math.random() - 0.5) * 60,
+              y: (Math.random() - 0.5) * 40,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed - 2.5,
+              size: 5 + Math.random() * 6,
+              rot: Math.random() * Math.PI * 2,
+              vRot: (Math.random() - 0.5) * 0.25,
+              color: colors[Math.floor(Math.random() * colors.length)],
+              alpha: 1.0
+            });
+          }
+        }
+
+        function updateConfetti(dt) {
+          state.assemblyAnim.confetti.forEach(p => {
+            p.x += p.vx * 50 * dt;
+            p.y += p.vy * 50 * dt;
+            p.vy += 3.8 * dt; // gravity
+            p.rot += p.vRot;
+            p.alpha = Math.max(0, p.alpha - 0.38 * dt);
+          });
+        }
+
+        function drawCelebrationConfetti(c) {
+          if (!state.assemblyAnim.celebrating || !state.assemblyAnim.confetti.length) return;
+          c.save();
+          state.assemblyAnim.confetti.forEach(p => {
+            if (p.alpha <= 0) return;
+            c.save();
+            c.translate(p.x, p.y);
+            c.rotate(p.rot);
+            c.fillStyle = p.color;
+            c.globalAlpha = p.alpha;
+            c.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+            c.restore();
+          });
+          c.restore();
+        }
+
+        function updateAssembleButtonUI() {
+          const btn1 = document.getElementById('btnAssembleAnim');
+          const btn2 = document.getElementById('btnAssembleDeck');
+
+          if (state.assemblyAnim.active) {
+            const pct = Math.round(state.assemblyAnim.progress * 100);
+            const label = `⏳ Assembling (${pct}%)`;
+            if (btn1) { btn1.className = 'btn btn-sm btn-primary'; btn1.innerText = label; }
+            if (btn2) { btn2.className = 'btn btn-sm btn-primary'; btn2.innerText = label; }
+
+            // Descriptive progress message
+            if (pct < 22) showAssemblyToast("1/5: Cardboard stand rising into position...");
+            else if (pct < 45) showAssemblyToast("2/5: 8 Profile ribs locking into throat notches...");
+            else if (pct < 68) showAssemblyToast("3/5: Flexible inner PVC liner sliding along axis...");
+            else if (pct < 85) showAssemblyToast("4/5: Brim flange & bamboo skewers mounting...");
+            else showAssemblyToast("5/5: 3 Rotor blades snapping into bottle cap hub...");
+          } else {
+            const label = state.assemblyAnim.celebrating ? '✨ Fully Assembled!' : '🎬 Fly-In Assembly';
+            if (btn1) { btn1.className = 'btn btn-sm btn-accent'; btn1.innerText = label; }
+            if (btn2) { btn2.className = 'btn btn-sm btn-accent'; btn2.innerText = state.assemblyAnim.celebrating ? '✨ Replay' : '🎬 Assemble'; }
+          }
+        }
+
+        function triggerAssemblyAnimation() {
+          // Switch to 3D perspective view
+          if (state.viewMode !== 'iso' && state.viewMode !== 'exploded') {
+            setViewMode('iso');
+          }
+
+          // Reset camera smoothly for ideal assembly viewing
+          state.camera.rotX = -0.38;
+          state.camera.rotY = 0.75;
+          state.camera.zoom = 1.0;
+
+          // Start procedural animation from 0
+          state.assemblyAnim.active = true;
+          state.assemblyAnim.progress = 0;
+          state.assemblyAnim.startTime = performance.now();
+          state.assemblyAnim.celebrating = false;
+          state.isSpinning = false; // pause spin during assembly flight
+
+          const btnSpin = document.getElementById('btnSpinToggle');
+          if (btnSpin) {
+            btnSpin.className = 'btn btn-sm btn-green';
+            btnSpin.innerText = '▶ Spin Turbine';
+          }
+
+          showAssemblyToast("🎬 Assembly Sequence Started: Components flying in!");
+          updateAssembleButtonUI();
+          drawCurrentView();
+        }
+
+        // --- 8. ANIMATION LOOP (ROTOR SPIN, 3D FLY-IN & WIND SIMULATION) ---
+        function animationLoop(now) {
+          const dt = (now - state.lastFrameTime) / 1000;
+          state.lastFrameTime = now;
+
+          // 1. Procedural 3D Assembly Flight Update
+          if (state.assemblyAnim.active) {
+            const elapsed = now - state.assemblyAnim.startTime;
+            let p = elapsed / state.assemblyAnim.duration;
+            if (p >= 1.0) {
+              p = 1.0;
+              state.assemblyAnim.active = false;
+              state.assemblyAnim.progress = 1.0;
+              state.assemblyAnim.celebrating = true;
+              state.assemblyAnim.celebrateTimer = 2.8; // 2.8s celebration
+              spawnConfetti();
+
+              // Kick off celebratory turbine spin
+              state.isSpinning = true;
+              const btnSpin = document.getElementById('btnSpinToggle');
+              if (btnSpin) {
+                btnSpin.className = 'btn btn-sm btn-danger';
+                btnSpin.innerText = '⏸ Pause Spin';
+              }
+
+              showAssemblyToast("🎉 100% Assembled! Cardboard Turbine Structure Locked.");
+              updateAssembleButtonUI();
+            } else {
+              state.assemblyAnim.progress = p;
+              updateAssembleButtonUI();
+            }
+            drawCurrentView();
+          }
+
+          // 2. Confetti Update during Celebration
+          if (state.assemblyAnim.celebrating) {
+            state.assemblyAnim.celebrateTimer -= dt;
+            updateConfetti(dt);
+            if (state.assemblyAnim.celebrateTimer <= 0) {
+              state.assemblyAnim.celebrating = false;
+              hideAssemblyToast();
+              updateAssembleButtonUI();
+            }
+            drawCurrentView();
+          }
+
+          // 3. Rotor Spin & Wind Simulation Update
+          if (state.isSpinning) {
+            const omega = (state.rpm * 2 * Math.PI) / 60;
+            state.rotorAngle = (state.rotorAngle + omega * dt) % (Math.PI * 2);
+
+            // Update wind ribbons
+            const windSpeedPx = state.windSpeed * 65 * dt;
+            state.windRibbons.forEach(ribbon => {
+              ribbon.z += windSpeedPx * ribbon.speed;
+              if (ribbon.z > 280) {
+                ribbon.z = -220 - Math.random() * 80;
+                ribbon.x = (Math.random() - 0.5) * 160;
+                ribbon.y = (Math.random() - 0.5) * 160;
+              }
+            });
+
+            // Update LED glow indicator
+            const led = document.getElementById('ledIndicator');
+            if (led) {
+              const intensity = Math.min(1, state.windSpeed / 6);
+              led.style.background = `rgba(239, 68, 68, ${0.4 + intensity * 0.6})`;
+              led.style.boxShadow = `0 0 ${intensity * 12}px #ef4444`;
+            }
+
+            drawCurrentView();
+          }
+
+          animFrameId = requestAnimationFrame(animationLoop);
+        }
+
+        function toggleSpin() {
+          state.isSpinning = !state.isSpinning;
+          const btn = document.getElementById('btnSpinToggle');
+          if (btn) {
+            if (state.isSpinning) {
+              btn.className = 'btn btn-sm btn-danger';
+              btn.innerText = '⏸ Pause Spin';
+            } else {
+              btn.className = 'btn btn-sm btn-green';
+              btn.innerText = '▶ Spin Turbine';
+              const led = document.getElementById('ledIndicator');
+              if (led) {
+                led.style.background = '#94a3b8';
+                led.style.boxShadow = 'none';
+              }
+            }
+          }
+          safeSetText('dispRpmVal', state.isSpinning ? state.rpm : 0);
+          drawCurrentView();
+        }
+
+        function onWindSpeedChange(val) {
+          state.windSpeed = parseFloat(val) || 0;
+          safeSetText('dispWindSpeed', `${state.windSpeed.toFixed(1)} m/s`);
+          const tsr = 4.2;
+          const rotorDiaM = state.geo.currentRotorDia / 1000;
+          if (rotorDiaM > 0.01) {
+            state.rpm = Math.round((tsr * state.windSpeed * 60) / (Math.PI * rotorDiaM));
+          }
+          safeSetText('dispRpmVal', state.isSpinning ? state.rpm : 0);
+          drawCurrentView();
+        }
+
+        // --- 8. GRAPHICAL VIEWPORT RENDERER (CARTOON CARDBOARD 3D ENGINE) ---
+        function drawCurrentView() {
+          if (!ctx || !canvas) return;
+
+          const w = canvas.width;
+          const h = canvas.height;
+          ctx.clearRect(0, 0, w, h);
+
+          // Cardboard cutting-mat background
+          drawCardboardWorkshopMat(ctx, w, h);
+
+          const cx = (w / 2) + (state.camera.panX * (window.devicePixelRatio || 1));
+          const cy = (h / 2) + (state.camera.panY * (window.devicePixelRatio || 1));
+
+          ctx.save();
+          ctx.translate(cx, cy);
+
+          const scale = state.camera.zoom * (window.devicePixelRatio || 1);
+
+          if (state.viewMode === 'iso' || state.viewMode === 'exploded') {
+            draw3DCardboardTurbine(ctx, scale);
+          } else if (state.viewMode === 'side') {
+            drawSideElevation2D(ctx, scale);
+          } else if (state.viewMode === 'front') {
+            drawFrontElevation2D(ctx, scale);
+          } else if (state.viewMode === 'top') {
+            drawTopView2D(ctx, scale);
+          }
+
+          // Render celebration confetti sparkles if active
+          drawCelebrationConfetti(ctx);
+
+          ctx.restore();
+        }
+
+        function drawCardboardWorkshopMat(c, w, h) {
+          c.save();
+          // Warm workshop wood background
+          c.fillStyle = '#26190f';
+          c.fillRect(0, 0, w, h);
+
+          // Cutting grid
+          c.strokeStyle = 'rgba(217, 169, 123, 0.07)';
+          c.lineWidth = 1;
+          const step = 35 * (window.devicePixelRatio || 1);
+
+          for (let x = 0; x < w; x += step) {
+            c.beginPath();
+            c.moveTo(x, 0);
+            c.lineTo(x, h);
+            c.stroke();
+          }
+          for (let y = 0; y < h; y += step) {
+            c.beginPath();
+            c.moveTo(0, y);
+            c.lineTo(w, y);
+            c.stroke();
+          }
+
+          // Center crosshair with craft tape look
+          const cx = w / 2;
+          const cy = h / 2;
+          c.strokeStyle = 'rgba(245, 158, 11, 0.25)';
+          c.lineWidth = 1.5;
+          c.beginPath();
+          c.moveTo(cx - 25, cy);
+          c.lineTo(cx + 25, cy);
+          c.moveTo(cx, cy - 25);
+          c.lineTo(cx, cy + 25);
+          c.stroke();
+
+          c.restore();
+        }
+
+        // 3D Matrix Perspective Projection Helper
+        function project3D(x, y, z, rotX, rotY, explodeOffset = 0) {
+          const ez = z + explodeOffset;
+
+          // Rotate around Y axis (yaw)
+          const cosY = Math.cos(rotY);
+          const sinY = Math.sin(rotY);
+          const x1 = (x * cosY) - (ez * sinY);
+          const z1 = (x * sinY) + (ez * cosY);
+
+          // Rotate around X axis (pitch)
+          const cosX = Math.cos(rotX);
+          const sinX = Math.sin(rotX);
+          const y2 = (y * cosX) - (z1 * sinX);
+          const z2 = (y * sinX) + (z1 * cosX);
+
+          // Realistic perspective camera with camera distance d
+          const cameraDist = 750;
+          const fovFactor = cameraDist / (cameraDist + z2);
+
+          return {
+            px: x1 * fovFactor,
+            py: y2 * fovFactor,
+            depth: z2,
+            scale: fovFactor
+          };
+        }
+
+        // --- 9. FULL 3D CARTOON CARDBOARD TURBINE RENDERER ---
+        function draw3DCardboardTurbine(c, scale) {
+          const g = state.geo;
+          const rx = state.camera.rotX;
+          const ry = state.camera.rotY;
+
+          const s = scale * 0.72;
+          const isExploded = (state.viewMode === 'exploded');
+
+          // Component flight & explosion factors (0 = detached outside, 1 = locked in assembled position)
+          let F_base = 1, F_throat = 1, F_ribs = [], F_liner = 1, F_brim = 1, F_motor = 1, F_hub = 1, F_blades = [];
+
+          if (state.assemblyAnim.active) {
+            const T = state.assemblyAnim.progress;
+            F_base = getBounceProgress(T, 0.00, 0.22);
+            F_throat = getBounceProgress(T, 0.10, 0.28);
+            for (let i = 0; i < g.ribCount; i++) {
+              const ts = 0.20 + (i * 0.035);
+              const te = 0.40 + (i * 0.035);
+              F_ribs.push(getBounceProgress(T, ts, te));
+            }
+            F_liner = getStageProgress(T, 0.45, 0.65);
+            F_brim = getBounceProgress(T, 0.58, 0.78);
+            F_motor = getStageProgress(T, 0.68, 0.84);
+            F_hub = getBounceProgress(T, 0.76, 0.88);
+            for (let b = 0; b < g.bladeCount; b++) {
+              const tsb = 0.82 + (b * 0.05);
+              const teb = 0.94 + (b * 0.05);
+              F_blades.push(getBounceProgress(T, tsb, teb));
+            }
+          } else {
+            const expFactor = isExploded ? (state.explodedDist / 100) : 0;
+            const assembled = 1 - expFactor;
+            F_base = assembled;
+            F_throat = assembled;
+            for (let i = 0; i < g.ribCount; i++) F_ribs.push(assembled);
+            F_liner = assembled;
+            F_brim = assembled;
+            F_motor = assembled;
+            F_hub = assembled;
+            for (let b = 0; b < g.bladeCount; b++) F_blades.push(assembled);
+          }
+
+          // Offsets computed from (1 - F)
+          const expZ_inlet = -120 * (1 - F_liner);
+          const expZ_throat = 0;
+          const expZ_diff = 120 * (1 - F_liner);
+          const expZ_brim = 240 * (1 - F_brim);
+          const expZ_rotor = -45 * (1 - F_hub);
+          const expZ_motor = 65 * (1 - F_motor);
+          const expY_stand = 140 * (1 - F_base);
+
+          const zOffset = -(g.totalAxialLength / 2);
+
+          const R_in = (g.currentInletDia / 2) * s;
+          const R_th = (g.currentThroatDia / 2) * s;
+          const R_out = (g.currentOutletDia / 2) * s;
+          const R_brim = (g.currentTotalBrimDia / 2) * s;
+          const R_rotor = g.currentRotorRadius * s;
+          const R_hub = (g.currentHubDia / 2) * s;
+
+          const Z_in = (0 + zOffset) * s;
+          const Z_th = (g.currentInletLen + zOffset) * s;
+          const Z_out = (g.totalAxialLength + zOffset) * s;
+
+          // 1. Draw Cartoon Wind Ribbons if spinning
+          if (state.isSpinning) {
+            c.save();
+            c.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+            c.lineWidth = 2.5;
+            state.windRibbons.forEach(rib => {
+              const pStart = project3D(rib.x * s, rib.y * s, (rib.z + zOffset) * s, rx, ry);
+              const pEnd = project3D(rib.x * s, rib.y * s, (rib.z + rib.len + zOffset) * s, rx, ry);
+              c.beginPath();
+              c.moveTo(pStart.px, pStart.py);
+              c.lineTo(pEnd.px, pEnd.py);
+              c.stroke();
+            });
+            c.restore();
+          }
+
+          // 2. Base Stand (Cardboard Cradle)
+          if (state.visibility.base) {
+            c.save();
+            c.fillStyle = '#c68b59'; // Kraft cardboard
+            c.strokeStyle = '#4a2c17'; // Thick ink outline
+            c.lineWidth = 2.5;
+
+            const baseW = 150 * s;
+            const baseD = 130 * s;
+            const baseY = ((g.currentTotalBrimDia / 2) + 20) * s + (expY_stand * s);
+
+            const p1 = project3D(-baseW, baseY, Z_th - baseD, rx, ry);
+            const p2 = project3D(baseW, baseY, Z_th - baseD, rx, ry);
+            const p3 = project3D(baseW, baseY, Z_th + baseD, rx, ry);
+            const p4 = project3D(-baseW, baseY, Z_th + baseD, rx, ry);
+
+            c.beginPath();
+            c.moveTo(p1.px, p1.py);
+            c.lineTo(p2.px, p2.py);
+            c.lineTo(p3.px, p3.py);
+            c.lineTo(p4.px, p4.py);
+            c.closePath();
+            c.fill();
+            c.stroke();
+
+            // Cardboard uprights with corrugated edge styling
+            const pThBottom = project3D(0, R_th, Z_th, rx, ry);
+            c.beginPath();
+            c.moveTo(pThBottom.px, pThBottom.py);
+            c.lineTo(p1.px + (baseW * 0.9), baseY);
+            c.lineTo(p1.px + (baseW * 1.1), baseY);
+            c.closePath();
+            c.fill();
+            c.stroke();
+
+            c.restore();
+          }
+
+          // 3. Diffuser Cone & Flexible Liner
+          if (state.visibility.liner || state.visibility.diffuserCone) {
+            c.save();
+            const segments = 24;
+            const maxSeg = state.cutaway ? Math.floor(segments * 0.72) : segments;
+
+            // Draw shaded quads for diffuser
+            for (let i = 0; i < maxSeg; i++) {
+              const a1 = (i * 2 * Math.PI) / segments;
+              const a2 = ((i + 1) * 2 * Math.PI) / segments;
+
+              // Shading based on normal angle
+              const lightShade = Math.sin(a1) * 20;
+              c.fillStyle = `rgb(${210 + lightShade}, ${165 + lightShade}, ${120 + lightShade})`;
+              c.strokeStyle = '#4a2c17';
+              c.lineWidth = 1.5;
+
+              const p1 = project3D(R_th * Math.cos(a1), R_th * Math.sin(a1), Z_th + (expZ_diff * s), rx, ry);
+              const p2 = project3D(R_th * Math.cos(a2), R_th * Math.sin(a2), Z_th + (expZ_diff * s), rx, ry);
+              const p3 = project3D(R_out * Math.cos(a2), R_out * Math.sin(a2), Z_out + (expZ_diff * s), rx, ry);
+              const p4 = project3D(R_out * Math.cos(a1), R_out * Math.sin(a1), Z_out + (expZ_diff * s), rx, ry);
+
+              c.beginPath();
+              c.moveTo(p1.px, p1.py);
+              c.lineTo(p2.px, p2.py);
+              c.lineTo(p3.px, p3.py);
+              c.lineTo(p4.px, p4.py);
+              c.closePath();
+              c.fill();
+              c.stroke();
+
+              // Inlet converging section
+              if (state.visibility.inletBell) {
+                const pi1 = project3D(R_in * Math.cos(a1), R_in * Math.sin(a1), Z_in + (expZ_inlet * s), rx, ry);
+                const pi2 = project3D(R_in * Math.cos(a2), R_in * Math.sin(a2), Z_in + (expZ_inlet * s), rx, ry);
+
+                c.fillStyle = `rgb(${225 + lightShade}, ${185 + lightShade}, ${145 + lightShade})`;
+                c.beginPath();
+                c.moveTo(pi1.px, pi1.py);
+                c.lineTo(pi2.px, pi2.py);
+                c.lineTo(p2.px, p2.py);
+                c.lineTo(p1.px, p1.py);
+                c.closePath();
+                c.fill();
+                c.stroke();
+              }
+            }
+            c.restore();
+          }
+
+          // 4. 8 Profile Ribs (Cardboard with flutes)
+          if (state.visibility.ribs) {
+            c.save();
+            const numRibs = g.ribCount;
+            for (let i = 0; i < numRibs; i++) {
+              const angle = (i * 2 * Math.PI) / numRibs;
+              const ca = Math.cos(angle);
+              const sa = Math.sin(angle);
+
+              const ribF = (F_ribs && F_ribs[i] !== undefined) ? F_ribs[i] : 1;
+              const rOff = (85 * (1 - ribF)) * s;
+              const ribZOff = (30 * (1 - ribF) * Math.sin(angle)) * s;
+
+              const rIn = R_in + rOff;
+              const rTh = R_th + rOff;
+              const rOut = R_out + rOff;
+              const rBrim = R_brim + rOff;
+              const rOuterFrame = rOut + (18 * s);
+
+              const ptIn = project3D(rIn * ca, rIn * sa, Z_in + (expZ_inlet * s) + ribZOff, rx, ry);
+              const ptTh = project3D(rTh * ca, rTh * sa, Z_th + (expZ_throat * s) + ribZOff, rx, ry);
+              const ptOut = project3D(rOut * ca, rOut * sa, Z_out + (expZ_diff * s) + ribZOff, rx, ry);
+              const ptBrim = project3D(rBrim * ca, rBrim * sa, Z_out + (expZ_brim * s) + ribZOff, rx, ry);
+              const ptFrame = project3D(rOuterFrame * ca, rOuterFrame * sa, Z_out + (expZ_diff * s) + ribZOff, rx, ry);
+              const ptThFrame = project3D((rTh + 35 * s) * ca, (rTh + 35 * s) * sa, Z_th + (expZ_throat * s) + ribZOff, rx, ry);
+
+              c.fillStyle = '#b37744';
+              c.strokeStyle = '#3d200f';
+              c.lineWidth = 2;
+
+              c.beginPath();
+              c.moveTo(ptIn.px, ptIn.py);
+              c.lineTo(ptTh.px, ptTh.py);
+              c.lineTo(ptOut.px, ptOut.py);
+              c.lineTo(ptBrim.px, ptBrim.py);
+              c.lineTo(ptFrame.px, ptFrame.py);
+              c.lineTo(ptThFrame.px, ptThFrame.py);
+              c.closePath();
+              c.fill();
+              c.stroke();
+            }
+            c.restore();
+          }
+
+          // 5. Brim Flange Ring
+          if (state.visibility.brim) {
+            c.save();
+            c.fillStyle = '#f59e0b';
+            c.strokeStyle = '#78350f';
+            c.lineWidth = 2.5;
+
+            draw3DFlangeDisk(c, R_out, R_brim, Z_out + (expZ_brim * s), rx, ry, 28, '#f59e0b');
+            c.restore();
+          }
+
+          // 6. Central Bottle Cap Hub & Spinning Rotor Blades
+          if (state.visibility.hub || state.visibility.blades) {
+            const zRotor = Z_th + (expZ_rotor * s);
+
+            // Bottle Cap Hub (Cartoon Bright Blue)
+            if (state.visibility.hub) {
+              c.save();
+              c.fillStyle = '#0284c7';
+              c.strokeStyle = '#082f49';
+              c.lineWidth = 2;
+              draw3DCylinder(c, R_hub, 12 * s, zRotor - (6 * s), rx, ry, '#0284c7');
+              c.restore();
+            }
+
+            // Rotor Blades
+            if (state.visibility.blades) {
+              c.save();
+              const bladeCount = g.bladeCount;
+              const chordRoot = (g.bladeRootChord * s) * 0.45;
+              const chordTip = (g.bladeTipChord * s) * 0.45;
+
+              // Apply live rotation angle
+              const baseAngle = state.rotorAngle;
+
+              for (let b = 0; b < bladeCount; b++) {
+                const bladeF = (F_blades && F_blades[b] !== undefined) ? F_blades[b] : 1;
+                const bladeOffR = (75 * (1 - bladeF)) * s;
+                const bladeOffZ = (-35 * (1 - bladeF)) * s;
+                const pitchRad = (g.statedPitch * (0.15 + 0.85 * bladeF) * Math.PI) / 180;
+                const zBladePlane = zRotor + bladeOffZ;
+
+                const angle = baseAngle + ((b * 2 * Math.PI) / bladeCount);
+                const cb = Math.cos(angle);
+                const sb = Math.sin(angle);
+                const perpX = -sb;
+                const perpY = cb;
+
+                const zPitchOff = Math.sin(pitchRad) * chordRoot;
+                const rBladeHub = R_hub + bladeOffR;
+                const rBladeTip = R_rotor + bladeOffR;
+
+                const p1 = project3D((rBladeHub * cb) - (perpX * chordRoot), (rBladeHub * sb) - (perpY * chordRoot), zBladePlane - zPitchOff, rx, ry);
+                const p2 = project3D((rBladeHub * cb) + (perpX * chordRoot), (rBladeHub * sb) + (perpY * chordRoot), zBladePlane + zPitchOff, rx, ry);
+                const p3 = project3D((rBladeTip * cb) + (perpX * chordTip), (rBladeTip * sb) + (perpY * chordTip), zBladePlane + (zPitchOff * 0.5), rx, ry);
+                const p4 = project3D((rBladeTip * cb) - (perpX * chordTip), (rBladeTip * sb) - (perpY * chordTip), zBladePlane - (zPitchOff * 0.5), rx, ry);
+
+                // Blade body: Cardboard with green craft paint
+                c.fillStyle = '#10b981';
+                c.strokeStyle = '#064e3b';
+                c.lineWidth = 2;
+
+                c.beginPath();
+                c.moveTo(p1.px, p1.py);
+                c.lineTo(p2.px, p2.py);
+                c.lineTo(p3.px, p3.py);
+                c.lineTo(p4.px, p4.py);
+                c.closePath();
+                c.fill();
+                c.stroke();
+
+                // Pitch chord line on blade
+                c.strokeStyle = '#fef08a';
+                c.lineWidth = 1.5;
+                c.setLineDash([3, 3]);
+                const pMidRoot = project3D(rBladeHub * cb, rBladeHub * sb, zBladePlane, rx, ry);
+                const pMidTip = project3D(rBladeTip * cb, rBladeTip * sb, zBladePlane, rx, ry);
+                c.beginPath();
+                c.moveTo(pMidRoot.px, pMidRoot.py);
+                c.lineTo(pMidTip.px, pMidTip.py);
+                c.stroke();
+                c.setLineDash([]);
+              }
+              c.restore();
+            }
+          }
+
+          // 7. Bamboo Skewer Spokes & DC Toy Motor
+          if (state.visibility.struts || state.visibility.motor) {
+            c.save();
+            const zRotor = Z_th + (expZ_rotor * s);
+            const zMotor = zRotor + (25 * s) + (expZ_motor * s);
+
+            // 3 Bamboo Skewers
+            c.strokeStyle = '#d97706';
+            c.lineWidth = 3;
+            for (let sIdx = 0; sIdx < 3; sIdx++) {
+              const strutAngle = (sIdx * 2 * Math.PI) / 3 + (Math.PI / 6);
+              const sx = Math.cos(strutAngle) * R_th;
+              const sy = Math.sin(strutAngle) * R_th;
+
+              const pThroatWall = project3D(sx, sy, Z_th, rx, ry);
+              const pMotorCenter = project3D(0, 0, zMotor, rx, ry);
+
+              c.beginPath();
+              c.moveTo(pThroatWall.px, pThroatWall.py);
+              c.lineTo(pMotorCenter.px, pMotorCenter.py);
+              c.stroke();
+            }
+
+            // DC Toy Motor Cylinder
+            if (state.visibility.motor) {
+              draw3DCylinder(c, (g.currentMotorDia / 2) * s, (g.currentMotorLen * s), zMotor, rx, ry, '#64748b');
+            }
+            c.restore();
+          }
+
+          // 8. Dimension Arrows
+          if (state.showDimensions && !isExploded && !state.assemblyAnim.active) {
+            draw3DDimensionLines(c, Z_in, Z_out, R_brim, rx, ry);
+          }
+        }
+
+        function draw3DFlangeDisk(c, rInner, rOuter, z, rx, ry, segs, color) {
+          c.fillStyle = color;
+          c.beginPath();
+          // Outer loop
+          for (let i = 0; i <= segs; i++) {
+            const a = (i * 2 * Math.PI) / segs;
+            const pt = project3D(Math.cos(a) * rOuter, Math.sin(a) * rOuter, z, rx, ry);
+            if (i === 0) c.moveTo(pt.px, pt.py);
+            else c.lineTo(pt.px, pt.py);
+          }
+          c.stroke();
+        }
+
+        function draw3DCylinder(c, radius, length, zStart, rx, ry, fillColor) {
+          c.fillStyle = fillColor;
+          c.strokeStyle = '#3d200f';
+          const segs = 16;
+
+          c.beginPath();
+          for (let i = 0; i <= segs; i++) {
+            const a = (i * 2 * Math.PI) / segs;
+            const pt = project3D(Math.cos(a) * radius, Math.sin(a) * radius, zStart, rx, ry);
+            if (i === 0) c.moveTo(pt.px, pt.py);
+            else c.lineTo(pt.px, pt.py);
+          }
+          c.fill();
+          c.stroke();
+        }
+
+        function draw3DDimensionLines(c, zIn, zOut, rMax, rx, ry) {
+          c.save();
+          const pZ1 = project3D(0, 0, zIn - 35, rx, ry);
+          const pZ2 = project3D(0, 0, zOut + 45, rx, ry);
+          c.strokeStyle = '#ef4444';
+          c.lineWidth = 2;
+          c.setLineDash([6, 4]);
+          c.beginPath();
+          c.moveTo(pZ1.px, pZ1.py);
+          c.lineTo(pZ2.px, pZ2.py);
+          c.stroke();
+          c.setLineDash([]);
+          c.restore();
+        }
+
+        // --- 10. 2D ELEVATION VIEWS ---
+        function drawSideElevation2D(c, scale) {
+          const g = state.geo;
+          const s = scale * 0.85;
+
+          const Rin = (g.currentInletDia / 2) * s;
+          const Rth = (g.currentThroatDia / 2) * s;
+          const Rout = (g.currentOutletDia / 2) * s;
+          const Rbrim = (g.currentTotalBrimDia / 2) * s;
+          const Lin = g.currentInletLen * s;
+          const Ldiff = g.currentDiffLen * s;
+          const Ltot = Lin + Ldiff;
+
+          const startX = -(Ltot / 2);
+          const throatX = startX + Lin;
+          const exitX = startX + Ltot;
+
+          c.save();
+
+          // Centerline
+          c.strokeStyle = '#ef4444';
+          c.lineWidth = 1.5;
+          c.setLineDash([8, 4, 2, 4]);
+          c.beginPath();
+          c.moveTo(startX - 50, 0);
+          c.lineTo(exitX + 50, 0);
+          c.stroke();
+          c.setLineDash([]);
+
+          // Airflow arrows
+          drawCartoonArrow(c, startX - 60, 0, 35);
+          drawCartoonArrow(c, startX - 60, -Rin * 0.5, 30);
+          drawCartoonArrow(c, startX - 60, Rin * 0.5, 30);
+
+          // Cardboard Profile Cross Section
+          c.fillStyle = '#dfa97b';
+          c.strokeStyle = '#4a2c17';
+          c.lineWidth = 3;
+
+          // Upper contour
+          c.beginPath();
+          c.moveTo(startX, -Rin);
+          c.lineTo(throatX, -Rth);
+          c.lineTo(exitX, -Rout);
+          c.lineTo(exitX, -Rbrim);
+          c.lineTo(exitX - (15 * s), -Rbrim);
+          c.lineTo(throatX, -Rth - (30 * s));
+          c.lineTo(startX, -Rin - (15 * s));
+          c.closePath();
+          c.fill();
+          c.stroke();
+
+          // Lower contour
+          c.beginPath();
+          c.moveTo(startX, Rin);
+          c.lineTo(throatX, Rth);
+          c.lineTo(exitX, Rout);
+          c.lineTo(exitX, Rbrim);
+          c.lineTo(exitX - (15 * s), Rbrim);
+          c.lineTo(throatX, Rth + (30 * s));
+          c.lineTo(startX, Rin + (15 * s));
+          c.closePath();
+          c.fill();
+          c.stroke();
+
+          // Rotor line
+          const Rrotor = g.currentRotorRadius * s;
+          c.strokeStyle = '#10b981';
+          c.lineWidth = 3.5;
+          c.beginPath();
+          c.moveTo(throatX, -Rrotor);
+          c.lineTo(throatX, Rrotor);
+          c.stroke();
+
+          // Bottle cap hub
+          const Rhub = (g.currentHubDia / 2) * s;
+          c.fillStyle = '#0284c7';
+          c.fillRect(throatX - (5 * s), -Rhub, 10 * s, Rhub * 2);
+
+          // Annotations
+          if (state.showDimensions) {
+            c.fillStyle = '#f59e0b';
+            c.font = '12px system-ui';
+            c.fillText(`θdiff = ${g.diffHalfAngle.toFixed(1)}°`, throatX + (Ldiff * 0.35), -Rth - 10);
+            c.fillStyle = '#0284c7';
+            c.fillText(`Throat: ${formatDim(g.currentThroatDia)}`, throatX - 40, Rth + 20);
+          }
+
+          c.restore();
+        }
+
+        function drawFrontElevation2D(c, scale) {
+          const g = state.geo;
+          const s = scale * 0.9;
+
+          const Rth = (g.currentThroatDia / 2) * s;
+          const Rin = (g.currentInletDia / 2) * s;
+          const Rout = (g.currentOutletDia / 2) * s;
+          const Rbrim = (g.currentTotalBrimDia / 2) * s;
+          const Rrotor = g.currentRotorRadius * s;
+          const Rhub = (g.currentHubDia / 2) * s;
+
+          c.save();
+
+          // Brim outer circle
+          c.strokeStyle = '#f59e0b';
+          c.lineWidth = 3;
+          c.beginPath();
+          c.arc(0, 0, Rbrim, 0, Math.PI * 2);
+          c.stroke();
+
+          // Outlet circle
+          c.strokeStyle = '#6b4c35';
+          c.setLineDash([5, 4]);
+          c.beginPath();
+          c.arc(0, 0, Rout, 0, Math.PI * 2);
+          c.stroke();
+          c.setLineDash([]);
+
+          // Inlet circle
+          c.strokeStyle = '#dfa97b';
+          c.lineWidth = 2.5;
+          c.beginPath();
+          c.arc(0, 0, Rin, 0, Math.PI * 2);
+          c.stroke();
+
+          // Throat circle
+          c.strokeStyle = '#ffffff';
+          c.lineWidth = 3;
+          c.beginPath();
+          c.arc(0, 0, Rth, 0, Math.PI * 2);
+          c.stroke();
+
+          // 8 Profile Ribs
+          c.strokeStyle = '#b37744';
+          c.lineWidth = 3;
+          for (let i = 0; i < g.ribCount; i++) {
+            const a = (i * 2 * Math.PI) / g.ribCount;
+            c.beginPath();
+            c.moveTo(Math.cos(a) * Rth, Math.sin(a) * Rth);
+            c.lineTo(Math.cos(a) * Rbrim, Math.sin(a) * Rbrim);
+            c.stroke();
+          }
+
+          // 3 Rotor Blades
+          c.fillStyle = '#10b981';
+          c.strokeStyle = '#064e3b';
+          c.lineWidth = 2;
+          const bladeCount = g.bladeCount;
+          const baseAngle = state.rotorAngle;
+
+          for (let b = 0; b < bladeCount; b++) {
+            const a = baseAngle + ((b * 2 * Math.PI) / bladeCount);
+            const ca = Math.cos(a);
+            const sa = Math.sin(a);
+            const perpX = -sa;
+            const perpY = ca;
+
+            const wRoot = 12 * s;
+            const wTip = 6 * s;
+
+            c.beginPath();
+            c.moveTo((ca * Rhub) - (perpX * wRoot), (sa * Rhub) - (perpY * wRoot));
+            c.lineTo((ca * Rhub) + (perpX * wRoot), (sa * Rhub) + (perpY * wRoot));
+            c.lineTo((ca * Rrotor) + (perpX * wTip), (sa * Rrotor) + (perpY * wTip));
+            c.lineTo((ca * Rrotor) - (perpX * wTip), (sa * Rrotor) - (perpY * wTip));
+            c.closePath();
+            c.fill();
+            c.stroke();
+          }
+
+          // Central Bottle Cap Hub
+          c.fillStyle = '#0284c7';
+          c.strokeStyle = '#082f49';
+          c.lineWidth = 3;
+          c.beginPath();
+          c.arc(0, 0, Rhub, 0, Math.PI * 2);
+          c.fill();
+          c.stroke();
+
+          // Radial clearance gap callout
+          c.strokeStyle = (g.currentTipClearance <= 0) ? '#ef4444' : '#10b981';
+          c.lineWidth = 3;
+          c.beginPath();
+          c.moveTo(Rrotor, 0);
+          c.lineTo(Rth, 0);
+          c.stroke();
+
+          c.fillStyle = (g.currentTipClearance <= 0) ? '#ef4444' : '#10b981';
+          c.font = '12px system-ui';
+          c.fontWeight = 'bold';
+          c.fillText(`Tip Gap: ${formatDim(g.currentTipClearance)}`, Rth + 10, 4);
+
+          c.restore();
+        }
+
+        function drawTopView2D(c, scale) {
+          const g = state.geo;
+          const s = scale * 0.85;
+
+          const Rin = (g.currentInletDia / 2) * s;
+          const Rth = (g.currentThroatDia / 2) * s;
+          const Rout = (g.currentOutletDia / 2) * s;
+          const Rbrim = (g.currentTotalBrimDia / 2) * s;
+          const Lin = g.currentInletLen * s;
+          const Ldiff = g.currentDiffLen * s;
+          const Ltot = Lin + Ldiff;
+
+          const startX = -(Ltot / 2);
+          const throatX = startX + Lin;
+          const exitX = startX + Ltot;
+
+          c.save();
+
+          // Base footprint
+          c.strokeStyle = '#4a2c17';
+          c.lineWidth = 2;
+          const baseW = 150 * s;
+          const baseD = 130 * s;
+          c.strokeRect(throatX - baseD, -baseW, baseD * 2, baseW * 2);
+          c.fillStyle = '#9c7352';
+          c.font = '11px system-ui';
+          c.fillText('CARDBOARD BASE STAND FOOTPRINT', throatX - baseD + 8, -baseW + 16);
+
+          // Contours
+          c.strokeStyle = '#dfa97b';
+          c.lineWidth = 3;
+          c.beginPath();
+          c.moveTo(startX, -Rin);
+          c.lineTo(throatX, -Rth);
+          c.lineTo(exitX, -Rout);
+          c.lineTo(exitX, -Rbrim);
+          c.stroke();
+
+          c.beginPath();
+          c.moveTo(startX, Rin);
+          c.lineTo(throatX, Rth);
+          c.lineTo(exitX, Rout);
+          c.lineTo(exitX, Rbrim);
+          c.stroke();
+
+          c.restore();
+        }
+
+        function drawCartoonArrow(c, x, y, len) {
+          c.save();
+          c.strokeStyle = '#38bdf8';
+          c.fillStyle = '#38bdf8';
+          c.lineWidth = 2.5;
+
+          c.beginPath();
+          c.moveTo(x, y);
+          c.lineTo(x + len, y);
+          c.stroke();
+
+          c.beginPath();
+          c.moveTo(x + len, y);
+          c.lineTo(x + len - 7, y - 5);
+          c.lineTo(x + len - 7, y + 5);
+          c.closePath();
+          c.fill();
+          c.restore();
+        }
+
+        // --- 11. DYNAMIC SVG PREVIEWS ---
+        function renderSvgCrossSection() {
+          const container = document.getElementById('svgCrossSectionBox');
+          if (!container) return;
+          const g = state.geo;
+
+          const w = 700;
+          const h = 240;
+          const pad = 40;
+
+          const Lin = g.currentInletLen;
+          const Ldiff = g.currentDiffLen;
+          const Ltot = Lin + Ldiff;
+          const scaleX = (w - (pad * 2)) / Ltot;
+          const scaleY = (h - (pad * 2)) / g.currentTotalBrimDia;
+
+          const cy = h / 2;
+          const x0 = pad;
+          const xt = x0 + (Lin * scaleX);
+          const x1 = x0 + (Ltot * scaleX);
+
+          const yIn = (g.currentInletDia / 2) * scaleY;
+          const yTh = (g.currentThroatDia / 2) * scaleY;
+          const yOut = (g.currentOutletDia / 2) * scaleY;
+          const yBrim = (g.currentTotalBrimDia / 2) * scaleY;
+
+          container.innerHTML = `
+            <svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+              <line x1="10" y1="${cy}" x2="${w-10}" y2="${cy}" stroke="#ef4444" stroke-dasharray="6,4" stroke-width="1.5"/>
+              <polygon points="${x0},${cy - yIn} ${xt},${cy - yTh} ${x1},${cy - yOut} ${x1},${cy - yBrim} ${x1 - 15},${cy - yBrim} ${xt},${cy - yTh - 25} ${x0},${cy - yIn - 10}" fill="#dfa97b" stroke="#4a2c17" stroke-width="2"/>
+              <polygon points="${x0},${cy + yIn} ${xt},${cy + yTh} ${x1},${cy + yOut} ${x1},${cy + yBrim} ${x1 - 15},${cy + yBrim} ${xt},${cy + yTh + 25} ${x0},${cy + yIn + 10}" fill="#dfa97b" stroke="#4a2c17" stroke-width="2"/>
+              <line x1="${xt}" y1="15" x2="${xt}" y2="${h-15}" stroke="#10b981" stroke-dasharray="4,4" stroke-width="1.5"/>
+              <text x="${xt + 4}" y="30" fill="#10b981" font-size="11" font-family="monospace" font-weight="bold">THROAT DATUM (Zt)</text>
+              <text x="${x0}" y="${cy - yIn - 8}" fill="#dfa97b" font-size="11" font-family="monospace">Inlet: ${formatDim(g.currentInletDia)}</text>
+              <text x="${xt}" y="${cy + yTh + 16}" fill="#10b981" font-size="11" font-family="monospace">Throat: ${formatDim(g.currentThroatDia)}</text>
+              <text x="${x1 - 60}" y="${cy - yOut - 8}" fill="#dfa97b" font-size="11" font-family="monospace">Outlet: ${formatDim(g.currentOutletDia)}</text>
+              <text x="${x1 + 4}" y="${cy - yBrim + 10}" fill="#f59e0b" font-size="11" font-family="monospace">Brim: ${formatDim(g.currentTotalBrimDia)}</text>
+            </svg>
+          `;
+        }
+
+        function renderSvgRotorPreview() {
+          const container = document.getElementById('svgRotorPreviewBox');
+          if (!container) return;
+          const g = state.geo;
+
+          const size = 300;
+          const c = size / 2;
+          const s = (size - 40) / g.currentThroatDia;
+
+          const Rth = (g.currentThroatDia / 2) * s;
+          const Rrotor = g.currentRotorRadius * s;
+          const Rhub = (g.currentHubDia / 2) * s;
+
+          let bladesSvg = '';
+          const bladeCount = g.bladeCount;
+          for (let i = 0; i < bladeCount; i++) {
+            const angle = (i * 2 * Math.PI) / bladeCount;
+            const ca = Math.cos(angle);
+            const sa = Math.sin(angle);
+            const perpX = -sa;
+            const perpY = ca;
+
+            const wRoot = 11;
+            const wTip = 6;
+
+            const p1x = (ca * Rhub) - (perpX * wRoot);
+            const p1y = (sa * Rhub) - (perpY * wRoot);
+            const p2x = (ca * Rhub) + (perpX * wRoot);
+            const p2y = (sa * Rhub) + (perpY * wRoot);
+            const p3x = (ca * Rrotor) + (perpX * wTip);
+            const p3y = (sa * Rrotor) + (perpY * wTip);
+            const p4x = (ca * Rrotor) - (perpX * wTip);
+            const p4y = (sa * Rrotor) - (perpY * wTip);
+
+            bladesSvg += `<polygon points="${c + p1x},${c + p1y} ${c + p2x},${c + p2y} ${c + p3x},${c + p3y} ${c + p4x},${c + p4y}" fill="#10b981" stroke="#064e3b" stroke-width="2"/>`;
+          }
+
+          const clrColor = (g.currentTipClearance <= 0) ? '#ef4444' : '#10b981';
+
+          container.innerHTML = `
+            <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="${c}" cy="${c}" r="${Rth}" fill="none" stroke="#ffffff" stroke-width="3"/>
+              <circle cx="${c}" cy="${c}" r="${Rrotor}" fill="none" stroke="${clrColor}" stroke-dasharray="4,4" stroke-width="1.5"/>
+              ${bladesSvg}
+              <circle cx="${c}" cy="${c}" r="${Rhub}" fill="#0284c7" stroke="#082f49" stroke-width="2.5"/>
+              <line x1="${c + Rrotor}" y1="${c}" x2="${c + Rth}" y2="${c}" stroke="${clrColor}" stroke-width="3.5"/>
+              <text x="${c + Rth + 8}" y="${c + 4}" fill="${clrColor}" font-size="11" font-family="monospace" font-weight="bold">Gap: ${formatDim(g.currentTipClearance)}</text>
+            </svg>
+          `;
+        }
+
+        // --- 12. ASSEMBLY TREE & CUT LIST ---
+        function renderAssemblyTree() {
+          const container = document.getElementById('assemblyTreeContainer');
+          if (!container) return;
+
+          const items = [
+            { key: 'base', name: '1. Cardboard Stand Base', mat: 'Thick Carton', datum: 'Ground Y = -280 mm', desc: 'Recycled carton base, 420x360mm footprint' },
+            { key: 'throatRing', name: '2. Throat Ring Anchor Strip', mat: '3-Ply Cardboard', datum: 'Z = 80 mm (Throat Plane)', desc: 'Nominal ⌀ 300 mm, strip length πD + 20mm seam' },
+            { key: 'ribs', name: '3. Profile Ribs (8x)', mat: 'Cardboard Flute', datum: 'Radial 45° spacing', desc: '8 contour ribs providing structural airfoil shape' },
+            { key: 'liner', name: '4. Flexible Inner Liner', mat: 'PVC File Sheet (0.8mm)', datum: 'Inner Boundary', desc: 'Developed conical wrap minimizing airflow drag' },
+            { key: 'inletBell', name: '5. Converging Inlet Bell', mat: 'Cardboard & Liner', datum: 'Z = 0 to 80 mm', desc: 'Converging intake passage, ⌀ 400mm &rarr; 300mm' },
+            { key: 'diffuserCone', name: '6. Diverging Diffuser Cone', mat: 'Cardboard & Liner', datum: 'Z = 80 to 340 mm', desc: 'Expanding passage, ⌀ 300mm &rarr; 660mm' },
+            { key: 'brim', name: '7. Brim Flange Ring', mat: 'Cardboard Ring', datum: 'Z = 340 mm (Exit Plane)', desc: 'Radial flange, ⌀ 780mm, creates low-pressure vortex' },
+            { key: 'struts', name: '8. Bamboo Skewer Spokes (3x)', mat: 'Bamboo Skewers', datum: '120° tripod star', desc: 'Centered motor support skewers inserted into ribs' },
+            { key: 'motor', name: '9. 12V DC Toy Motor / Generator', mat: 'Hobby DC Motor', datum: 'Axis (X=0, Y=0)', desc: '24mm ⌀ x 30mm length, mounted centrally' },
+            { key: 'hub', name: '10. Bottle Cap Rotor Hub', mat: 'Plastic Bottle Cap', datum: 'Z = 80 mm, Axis', desc: '30mm ⌀ cap with 3 equidistant blade slots' },
+            { key: 'blades', name: '11. Rotor Blades (3x)', mat: 'Stiff Cardboard', datum: '15° pitch, 120° apart', desc: 'Aerodynamic pitched blades with 2.0 mm tip clearance' },
+            { key: 'circuit', name: '12. LED & Resistor Circuit', mat: '5mm LED + 100Ω', datum: 'Power Indicator', desc: 'Power output indicator circuit' }
+          ];
+
+          container.innerHTML = items.map(it => {
+            const isVisible = state.visibility[it.key];
+            return `
+              <div class="tree-item ${isVisible ? 'selected' : ''}">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <input type="checkbox" ${isVisible ? 'checked' : ''} onchange="App.toggleComponentVisibility('${it.key}', this.checked)">
+                  <div>
+                    <strong style="color:${isVisible ? '#2b1708' : '#9c7352'};">${it.name}</strong>
+                    <div style="font-size:0.72rem; color:#6b4c35;">${it.desc}</div>
+                    <div style="font-size:0.68rem; color:#0284c7; font-family:var(--font-mono); margin-top:2px;">Datum: ${it.datum}</div>
+                  </div>
+                </div>
+                <div><span class="badge badge-guide">${it.mat}</span></div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        function renderCutList() {
+          const tbody = document.getElementById('cutListTableBody');
+          if (!tbody) return;
+          const g = state.geo;
+
+          const Rth = g.currentThroatDia / 2;
+          const Rbrim = g.currentTotalBrimDia / 2;
+          const Ltot = g.totalAxialLength;
+
+          const throatStripLen = (Math.PI * g.currentThroatDia) + g.seamOverlap;
+          const ribLength = Ltot + 20;
+          const ribHeight = (Rbrim - Rth) + 40;
+          const bladeLen = g.activeBladeLength + 10;
+
+          const items = [
+            { id: 1, name: 'Throat Ring Anchor Strip', mat: 'Cardboard (3-ply)', qty: 1, dim: `${formatDim(throatStripLen)} × ${formatDim(35)}`, thick: formatDim(g.currentCardboardThick), shape: 'Rectangular Strip with 8 slots', notes: `Exact πD = ${formatDim(g.throatCircExact)} + ${formatDim(g.seamOverlap)} lap` },
+            { id: 2, name: 'Structural Profile Ribs', mat: 'Cardboard (3-ply or 5-ply)', qty: g.ribCount, dim: `${formatDim(ribLength)} × ${formatDim(ribHeight)}`, thick: formatDim(g.currentCardboardThick), shape: 'Contoured Rib with Notch', notes: '8 pieces; includes 3mm axle hole & throat notch' },
+            { id: 3, name: 'Flexible Inner Liner (PVC)', mat: 'PVC File Sheet', qty: 2, dim: `${formatDim(Ltot)} × ${formatDim(g.throatCircExact / 2 + 15)}`, thick: `${g.pvcThickness} mm`, shape: 'Conical Frustum Half', notes: 'Cut as 2 halves with 15mm overlap seam' },
+            { id: 4, name: 'Brim Ring Quadrants', mat: 'Cardboard (3-ply)', qty: 4, dim: `${formatDim(Rbrim)} × ${formatDim(Rbrim - (g.currentOutletDia/2) + 15)}`, thick: formatDim(g.currentCardboardThick), shape: '90° Annular Arc Sector', notes: '4 quadrants assembled with lap joints' },
+            { id: 5, name: 'Rotor Blades', mat: 'Stiff Cardboard / Plastic', qty: g.bladeCount, dim: `${formatDim(bladeLen)} × ${formatDim(g.bladeRootChord)}`, thick: '1.5 - 2.0 mm', shape: 'Tapered Trapezoid with Tab', notes: `Pitch 15°; clearance compliant (${formatDim(g.currentTipClearance)})` },
+            { id: 6, name: 'Bottle Cap Hub', mat: 'Plastic Bottle Cap', qty: 1, dim: `⌀ ${formatDim(g.currentHubDia)} × ${formatDim(g.currentHubThick)}`, thick: 'Rigid Plastic', shape: 'Cylindrical Cap', notes: 'Drill 3 blade slots at 15° pitch + 3mm center axle' },
+            { id: 7, name: 'Bamboo Skewer Spokes', mat: 'Wooden Bamboo Skewer', qty: 3, dim: `Length ${formatDim(Rth + 20)} × ⌀ ${formatDim(g.currentSkewerDia)}`, thick: '⌀ 3.0 mm', shape: 'Cylindrical Rod', notes: 'Tripod spokes at 120° supporting motor cradle' },
+            { id: 8, name: 'Cardboard Stand Uprights', mat: 'Cardboard (5-ply)', qty: 2, dim: `${formatDim(260 * state.scaleFactor)} × ${formatDim(120 * state.scaleFactor)}`, thick: formatDim(g.currentCardboardThick), shape: 'Trapezoidal Cradle', notes: 'Supports turbine throat ring at center height' }
+          ];
+
+          tbody.innerHTML = items.map(it => `
+            <tr>
+              <td><strong>#${it.id}</strong></td>
+              <td><strong>${it.name}</strong></td>
+              <td><span class="badge badge-guide">${it.mat}</span></td>
+              <td><strong>${it.qty}</strong></td>
+              <td style="font-family:var(--font-mono); color:#0284c7; font-weight:800;">${it.dim}</td>
+              <td>${it.thick}</td>
+              <td>${it.shape}</td>
+              <td style="font-size:0.75rem; color:#5a3820;">${it.notes}</td>
+            </tr>
+          `).join('');
+
+          renderNestingPreview();
+        }
+
+        function renderNestingPreview() {
+          const container = document.getElementById('nestingSvgContainer');
+          if (!container) return;
+
+          const cardW = parseFloat(document.getElementById('nestCardWidth').value) || 1000;
+          const cardH = parseFloat(document.getElementById('nestCardHeight').value) || 700;
+
+          const svgW = 660;
+          const svgH = 320;
+
+          container.innerHTML = `
+            <svg width="100%" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="background:#1a1009;">
+              <rect x="5" y="5" width="${svgW - 10}" height="${svgH - 10}" fill="#26190f" stroke="#dfa97b" stroke-width="2" stroke-dasharray="6,4"/>
+              <text x="15" y="24" fill="#dfa97b" font-size="11" font-family="monospace" font-weight="bold">CARDBOARD SHEET 1: ${cardW} × ${cardH} mm</text>
+              <rect x="15" y="35" width="500" height="22" fill="#dfa97b" stroke="#4a2c17" stroke-width="1.5"/>
+              <text x="25" y="50" fill="#2b1708" font-size="9" font-family="monospace" font-weight="bold">THROAT STRIP (${formatDim(state.geo.throatCircExact + state.geo.seamOverlap)})</text>
+              ${Array.from({length: 4}).map((_, i) => `
+                <g transform="translate(${15 + (i * 130)}, 75)">
+                  <polygon points="0,0 120,15 120,115 95,115 35,35 0,18" fill="#b37744" stroke="#4a2c17" stroke-width="1.5"/>
+                  <text x="25" y="60" fill="#fff" font-size="9" font-family="monospace" font-weight="bold">RIB #${i+1}</text>
+                </g>
+              `).join('')}
+              <path d="M 15 210 A 100 100 0 0 1 115 310 L 85 310 A 70 70 0 0 0 15 240 Z" fill="#f59e0b" stroke="#78350f" stroke-width="1.5"/>
+              <text x="25" y="270" fill="#2e1605" font-size="9" font-family="monospace" font-weight="bold">BRIM Q1</text>
+            </svg>
+          `;
+        }
+
+        // --- 13. PRINT TEMPLATES ---
+        function renderPrintTemplates() {
+          const g = state.geo;
+
+          const ribBox = document.getElementById('templateRibBox');
+          if (ribBox) {
+            ribBox.innerHTML = `
+              <svg id="templateRibSvg" width="100%" height="200" viewBox="0 0 460 200" xmlns="http://www.w3.org/2000/svg" style="background:#fff;">
+                <polygon points="30,150 140,105 390,30 390,180 340,180 140,160 30,170" fill="#edd3bc" stroke="#2b1708" stroke-width="2.5"/>
+                <rect x="135" y="100" width="10" height="15" fill="#fff" stroke="#ef4444" stroke-width="2"/>
+                <text x="105" y="90" fill="#ef4444" font-size="10" font-family="monospace" font-weight="bold">Throat Notch</text>
+                <circle cx="140" cy="135" r="3" fill="#0284c7" stroke="#000" stroke-width="1.5"/>
+                <text x="150" y="140" fill="#0284c7" font-size="10" font-family="monospace" font-weight="bold">3mm Skewer Hole</text>
+                <text x="35" y="195" fill="#000" font-size="11" font-weight="bold">PROFILE RIB (CUT 8 FROM CARDBOARD) — SCALE: ${(state.scaleFactor * 100).toFixed(1)}%</text>
+              </svg>
+            `;
+          }
+
+          const bladeBox = document.getElementById('templateBladeBox');
+          if (bladeBox) {
+            bladeBox.innerHTML = `
+              <svg id="templateBladeSvg" width="100%" height="170" viewBox="0 0 350 170" xmlns="http://www.w3.org/2000/svg" style="background:#fff;">
+                <polygon points="50,35 270,55 270,105 50,125" fill="#d1fae5" stroke="#064e3b" stroke-width="2.5"/>
+                <rect x="20" y="60" width="30" height="40" fill="#fed7aa" stroke="#2b1708" stroke-width="2" stroke-dasharray="3,3"/>
+                <text x="24" y="85" fill="#000" font-size="8" font-family="monospace" font-weight="bold">10mm TAB</text>
+                <line x1="50" y1="80" x2="270" y2="80" stroke="#ef4444" stroke-dasharray="4,4" stroke-width="2"/>
+                <text x="105" y="75" fill="#ef4444" font-size="10" font-family="monospace" font-weight="bold">15° PITCH CHORD DATUM</text>
+                <text x="60" y="150" fill="#000" font-size="11" font-weight="bold">ROTOR BLADE (CUT 3) — SPAN: ${formatDim(g.activeBladeLength)}</text>
+              </svg>
+            `;
+          }
+
+          const throatBox = document.getElementById('templateThroatBox');
+          if (throatBox) {
+            throatBox.innerHTML = `
+              <svg id="templateThroatSvg" width="100%" height="80" viewBox="0 0 580 80" xmlns="http://www.w3.org/2000/svg" style="background:#fff;">
+                <rect x="15" y="15" width="540" height="35" fill="#edd3bc" stroke="#2b1708" stroke-width="2.5"/>
+                <rect x="515" y="15" width="40" height="35" fill="#fed7aa" stroke="#ea580c" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <text x="520" y="37" fill="#ea580c" font-size="8" font-family="monospace" font-weight="bold">SEAM</text>
+                <text x="20" y="70" fill="#000" font-size="11" font-weight="bold">THROAT STRIP — TOTAL CUT: ${formatDim(g.throatCircExact + g.seamOverlap)} (8 RIBS)</text>
+              </svg>
+            `;
+          }
+
+          const linerBox = document.getElementById('templateLinerBox');
+          if (linerBox) {
+            linerBox.innerHTML = `
+              <svg id="templateLinerSvg" width="100%" height="180" viewBox="0 0 440 180" xmlns="http://www.w3.org/2000/svg" style="background:#fff;">
+                <path d="M 40 160 A 300 300 0 0 1 400 160 L 350 160 A 220 220 0 0 0 90 160 Z" fill="#e0f2fe" stroke="#0284c7" stroke-width="2.5"/>
+                <text x="140" y="125" fill="#0369a1" font-size="11" font-weight="bold">CONICAL LINER HALF-SECTOR (CUT 2)</text>
+              </svg>
+            `;
+          }
+
+          const brimBox = document.getElementById('templateBrimSvg');
+          if (brimBox) {
+            brimBox.innerHTML = `
+              <svg id="templateBrimSvg" width="100%" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg" style="background:#fff;">
+                <path d="M 30 180 A 170 170 0 0 1 200 10 L 160 10 A 130 130 0 0 0 30 140 Z" fill="#fef3c7" stroke="#d97706" stroke-width="2.5"/>
+                <text x="45" y="85" fill="#78350f" font-size="11" font-weight="bold">BRIM FLANGE QUADRANT (CUT 4)</text>
+              </svg>
+            `;
+          }
+        }
+
+        // --- 14. BUDGET CALCULATOR ---
+        function renderBudgetTable() {
+          const tbody = document.getElementById('budgetTableBody');
+          if (!tbody) return;
+
+          let total = 0;
+          tbody.innerHTML = state.geo.budgetItems.map(it => {
+            const sub = it.isScrap ? 0 : it.subtotal;
+            total += sub;
+            return `
+              <tr>
+                <td><strong>${it.name}</strong></td>
+                <td><span class="badge badge-guide">${it.cat}</span></td>
+                <td>
+                  <label class="toggle-label">
+                    <input type="checkbox" ${it.isScrap ? 'checked' : ''} onchange="App.toggleBudgetScrap(${it.id}, this.checked)">
+                    <span>${it.isScrap ? 'Recycled Scrap (₹0)' : 'To Buy'}</span>
+                  </label>
+                </td>
+                <td><input type="text" value="${it.qty}" style="width:110px; padding:3px 6px;" onchange="App.updateBudgetQty(${it.id}, this.value)"></td>
+                <td><input type="number" value="${it.unitCost}" style="width:75px; padding:3px 6px;" onchange="App.updateBudgetCost(${it.id}, this.value)"></td>
+                <td style="font-family:var(--font-mono); font-weight:800; color:${it.isScrap ? '#6b4c35' : '#0284c7'};">
+                  ₹${sub.toFixed(2)}
+                </td>
+                <td><button class="btn btn-sm btn-danger" onclick="App.deleteBudgetItem(${it.id})">×</button></td>
+              </tr>
+            `;
+          }).join('');
+
+          safeSetText('budgetTotalCostDisplay', `₹${total.toFixed(2)}`);
+
+          const baselineRef = 405.0;
+          const diff = total - baselineRef;
+          const pct = ((diff / baselineRef) * 100).toFixed(1);
+          const varElem = document.getElementById('budgetVarianceDisplay');
+          const subElem = document.getElementById('budgetVarianceSub');
+
+          if (varElem) {
+            if (diff > 0) {
+              varElem.style.color = '#ef4444';
+              varElem.innerText = `+₹${diff.toFixed(2)} (+${pct}%)`;
+              if (subElem) subElem.innerText = 'Over reference budget';
+            } else if (diff < 0) {
+              varElem.style.color = '#059669';
+              varElem.innerText = `-₹${Math.abs(diff).toFixed(2)} (${pct}%)`;
+              if (subElem) subElem.innerText = 'Under reference budget (Savings)';
+            } else {
+              varElem.style.color = '#0284c7';
+              varElem.innerText = '₹0.00 (0.0%)';
+              if (subElem) subElem.innerText = 'Matches ₹405 baseline exactly';
+            }
+          }
+        }
+
+        function toggleBudgetScrap(id, isScrap) {
+          const item = state.geo.budgetItems.find(it => it.id === id);
+          if (item) {
+            item.isScrap = isScrap;
+            renderBudgetTable();
+          }
+        }
+
+        function updateBudgetCost(id, val) {
+          const item = state.geo.budgetItems.find(it => it.id === id);
+          if (item) {
+            item.unitCost = parseFloat(val) || 0;
+            item.subtotal = item.unitCost;
+            renderBudgetTable();
+          }
+        }
+
+        function updateBudgetQty(id, val) {
+          const item = state.geo.budgetItems.find(it => it.id === id);
+          if (item) {
+            item.qty = val;
+            renderBudgetTable();
+          }
+        }
+
+        function addBudgetItemPrompt() {
+          const name = prompt("Enter Material Item Name (e.g. Bamboo Skewers, Epoxy):");
+          if (!name) return;
+          const cost = parseFloat(prompt("Enter Estimated Cost in ₹:", "25")) || 0;
+
+          state.geo.budgetItems.push({
+            id: Date.now(),
+            name: name,
+            cat: "Hardware",
+            isScrap: false,
+            qty: "1 Set",
+            unitCost: cost,
+            subtotal: cost,
+            notes: "Custom material"
+          });
+          renderBudgetTable();
+        }
+
+        function deleteBudgetItem(id) {
+          state.geo.budgetItems = state.geo.budgetItems.filter(it => it.id !== id);
+          renderBudgetTable();
+        }
+
+        function resetBudgetToBaseline() {
+          state.geo.budgetItems = JSON.parse(JSON.stringify(BASELINE.budgetItems));
+          renderBudgetTable();
+        }
+
+        // --- 15. DIAGNOSTICS ENGINE ---
+        function renderDiagnostics() {
+          const container = document.getElementById('diagnosticsListContainer');
+          if (!container) return;
+          const g = state.geo;
+
+          const checks = [];
+
+          if (g.currentTipClearance <= 0) {
+            checks.push({
+              level: 'danger',
+              title: 'CRITICAL: Rotor-Diffuser Wall Collision',
+              desc: `Rotor ⌀ (${formatDim(g.currentRotorDia)}) is larger than throat ⌀ (${formatDim(g.currentThroatDia)}). Rotor crashes into cardboard wall!`,
+              rec: 'Switch to Option C in Rotor Designer or decrease blade length.'
+            });
+          } else if (g.currentTipClearance > 2.5) {
+            checks.push({
+              level: 'warning',
+              title: 'Clearance Exceeds 2.0 mm Guide Limit',
+              desc: `Current radial clearance is ${formatDim(g.currentTipClearance)}. Guide maximum limit is 2 mm.`,
+              rec: 'Tip gap leakage reduces suction drop across rotor.'
+            });
+          } else {
+            checks.push({
+              level: 'success',
+              title: 'Clearance Compliant (2.0 mm)',
+              desc: `Rotor radial clearance is ${formatDim(g.currentTipClearance)}, matching the 2 mm limit inside 300 mm throat.`,
+              rec: 'Tight tolerance verified.'
+            });
+          }
+
+          if (g.diffHalfAngle > 35) {
+            checks.push({
+              level: 'warning',
+              title: 'Large Diffuser Half-Angle',
+              desc: `Expansion angle is ${g.diffHalfAngle.toFixed(1)}° (greater than 30°).`,
+              rec: 'Requires downstream brim flange vortex suction to prevent flow separation.'
+            });
+          }
+
+          checks.push({
+            level: 'info',
+            title: 'Circumference Reference: Exact (942.5 mm) vs Guide (942 mm)',
+            desc: `Mathematical π × 300 mm = 942.48 mm. Guide states rounded 942 mm (-0.48 mm).`,
+            rec: 'Use calculated value (942.5 mm) + 20 mm seam overlap.'
+          });
+
+          const dangerCount = checks.filter(c => c.level === 'danger' || c.level === 'warning').length;
+          const badge = document.getElementById('navWarningCountBadge');
+          if (badge) {
+            badge.innerText = dangerCount;
+            badge.style.display = dangerCount > 0 ? 'inline-block' : 'none';
+          }
+
+          container.innerHTML = checks.map(c => `
+            <div class="alert-box alert-${c.level}">
+              <div style="font-size:1.2rem;">${c.level === 'danger' ? '❌' : (c.level === 'warning' ? '⚠️' : '✅')}</div>
+              <div style="flex:1;">
+                <strong>${c.title}</strong>
+                <div style="font-size:0.75rem; margin-top:2px;">${c.desc}</div>
+                <div style="font-size:0.72rem; margin-top:4px;"><strong>Action:</strong> ${c.rec}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        // --- 16. CONTROLS & ACTIONS ---
+        function switchTab(tabId) {
+          document.querySelectorAll('.nav-tab').forEach(t => {
+            t.classList.toggle('active', t.getAttribute('data-tab') === tabId);
+          });
+          document.querySelectorAll('.tab-content').forEach(c => {
+            c.classList.toggle('active', c.id === tabId);
+          });
+
+          if (tabId === 'tab-viewport') {
+            handleResize();
+          } else if (tabId === 'tab-templates') {
+            renderPrintTemplates();
+          } else if (tabId === 'tab-cutlist') {
+            renderCutList();
+          }
+        }
+
+        function setUnit(u) {
+          state.unit = u;
+          document.getElementById('unitMmBtn').classList.toggle('active', u === 'mm');
+          document.getElementById('unitCmBtn').classList.toggle('active', u === 'cm');
+          recalculateModel();
+          renderCutList();
+          renderPrintTemplates();
+          drawCurrentView();
+        }
+
+        function setViewMode(mode) {
+          state.viewMode = mode;
+          document.querySelectorAll('.view-mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.id === `btnMode${mode.charAt(0).toUpperCase() + mode.slice(1)}`);
+          });
+
+          const expBar = document.getElementById('explodedSliderBar');
+          if (expBar) expBar.style.display = (mode === 'exploded') ? 'flex' : 'none';
+
+          drawCurrentView();
+        }
+
+        function onScaleRangeInput(val) {
+          setScalePreset(parseFloat(val) / 100);
+        }
+
+        function setScalePreset(factor) {
+          state.scaleFactor = parseFloat(factor);
+          document.getElementById('scaleRange').value = Math.round(state.scaleFactor * 100);
+          document.getElementById('quickScaleSelect').value = state.scaleFactor.toString();
+
+          document.querySelectorAll('.preset-chip').forEach(chip => {
+            chip.classList.toggle('active', chip.innerText.includes(`${Math.round(state.scaleFactor * 100)}%`));
+          });
+
+          recalculateModel();
+          renderCutList();
+          renderPrintTemplates();
+          renderDiagnostics();
+          drawCurrentView();
+        }
+
+        function onTargetThroatChange(val) {
+          const target = parseFloat(val);
+          if (target > 50 && target < 1200) {
+            setScalePreset(target / BASELINE.throatDia);
+          }
+        }
+
+        function setBladeDatumMode(mode) {
+          state.geo.bladeDatumMode = mode;
+          ['Center', 'Edge', 'Clearance', 'Custom'].forEach(m => {
+            const el = document.getElementById(`labelDatum${m}`);
+            if (el) el.classList.toggle('selected', mode === m.toLowerCase());
+          });
+          recalculateModel();
+          renderCutList();
+          renderPrintTemplates();
+          renderDiagnostics();
+          drawCurrentView();
+        }
+
+        function updateGeoParam(key, val) {
+          state.geo[key] = parseFloat(val) || 0;
+          recalculateModel();
+          renderCutList();
+          renderPrintTemplates();
+          renderDiagnostics();
+          drawCurrentView();
+        }
+
+        function updateRotorParam(key, val) {
+          state.geo[key] = parseFloat(val) || 0;
+          if (key === 'bladeLength') {
+            state.geo.bladeDatumMode = 'custom';
+            state.geo.activeBladeLength = parseFloat(val) || 0;
+          }
+          recalculateModel();
+          renderCutList();
+          renderPrintTemplates();
+          renderDiagnostics();
+          drawCurrentView();
+        }
+
+        function toggleComponentVisibility(key, checked) {
+          state.visibility[key] = checked;
+          renderAssemblyTree();
+          drawCurrentView();
+        }
+
+        function toggleCutaway(checked) {
+          state.cutaway = checked;
+          drawCurrentView();
+        }
+
+        function toggleDimensions(checked) {
+          state.showDimensions = checked;
+          drawCurrentView();
+        }
+
+        function toggleWireframe(checked) {
+          state.wireframe = checked;
+          drawCurrentView();
+        }
+
+        function toggleLockHardware(checked) {
+          state.lockHardware = checked;
+          recalculateModel();
+          drawCurrentView();
+        }
+
+        function toggleRoundMm(checked) {
+          state.roundToNearestMm = checked;
+          recalculateModel();
+          renderCutList();
+          drawCurrentView();
+        }
+
+        function setExplodedDist(val) {
+          state.explodedDist = parseFloat(val);
+          safeSetText('explodedDistVal', `${val}%`);
+          drawCurrentView();
+        }
+
+        function resetCamera() {
+          state.camera.rotX = -0.42;
+          state.camera.rotY = 0.65;
+          state.camera.zoom = 1.0;
+          state.camera.panX = 0;
+          state.camera.panY = 0;
+          drawCurrentView();
+        }
+
+        function zoomCamera(factor) {
+          state.camera.zoom = Math.max(0.25, Math.min(6.0, state.camera.zoom * factor));
+          drawCurrentView();
+        }
+
+        function onCardboardTypeChange(val) {
+          state.geo.cardboardThickness = parseFloat(val) || 3.0;
+          recalculateModel();
+          renderCutList();
+        }
+
+        function onPvcThicknessChange(val) {
+          state.geo.pvcThickness = parseFloat(val) || 0.8;
+          recalculateModel();
+          renderCutList();
+        }
+
+        function onSeamOverlapChange(val) {
+          state.geo.seamOverlap = parseFloat(val) || 20.0;
+          recalculateModel();
+          renderCutList();
+        }
+
+        function onSkewerDiaChange(val) {
+          state.geo.skewerDia = parseFloat(val) || 3.0;
+          recalculateModel();
+          renderCutList();
+        }
+
+        function updateNesting() {
+          renderNestingPreview();
+        }
+
+        // --- 17. EXPORT, IMPORT, DOWNLOAD & RESET ---
+        function exportProjectJSON() {
+          const exportData = {
+            appName: "b-DWAT WindLens Cardboard Visualizer",
+            version: "2.0.0",
+            timestamp: new Date().toISOString(),
+            state: state
+          };
+
+          const jsonStr = JSON.stringify(exportData, null, 2);
+          const blob = new Blob([jsonStr], { type: "application/json" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `b-dwat-cardboard-model-${Math.round(state.scaleFactor * 100)}pct.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
+        function importProjectJSON(e) {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = function(evt) {
+            try {
+              const data = JSON.parse(evt.target.result);
+              if (data && data.state) {
+                state = data.state;
+                recalculateModel();
+                renderAssemblyTree();
+                renderBudgetTable();
+                renderCutList();
+                renderPrintTemplates();
+                renderDiagnostics();
+                drawCurrentView();
+                alert("Cardboard turbine configuration imported successfully!");
+              } else {
+                alert("Invalid configuration file format.");
+              }
+            } catch (err) {
+              alert("Error reading JSON file: " + err.message);
+            }
+          };
+          reader.readAsText(file);
+        }
+
+        function exportCutListCSV() {
+          const g = state.geo;
+          const rows = [
+            ["Item #", "Part Name", "Material", "Quantity", "Dimensions (L x W)", "Thickness", "Profile", "Notes"],
+            ["1", "Throat Ring Strip", "Cardboard (3-ply)", "1", `${formatDim(g.throatCircExact + g.seamOverlap)} x 35 mm`, formatDim(g.currentCardboardThick), "Rectangular Strip", "Includes seam lap"],
+            ["2", "Profile Ribs", "Cardboard (3-ply or 5-ply)", g.ribCount.toString(), `${formatDim(g.totalAxialLength + 20)} x ${formatDim(g.currentTotalBrimDia/2 - g.currentThroatDia/2 + 40)}`, formatDim(g.currentCardboardThick), "Contoured Rib", "With 3mm axle hole & notch"],
+            ["3", "Flexible Inner Liner", "Flexible PVC", "2", `${formatDim(g.totalAxialLength)} x ${formatDim(g.throatCircExact/2 + 15)}`, `${g.pvcThickness} mm`, "Conical Frustum", "Cut as 2 halves"],
+            ["4", "Brim Quadrants", "Cardboard (3-ply)", "4", `${formatDim(g.currentTotalBrimDia/2)} mm arc`, formatDim(g.currentCardboardThick), "Annular Sector", "4 quadrant pieces"],
+            ["5", "Rotor Blades", "Stiff Cardboard", g.bladeCount.toString(), `${formatDim(g.activeBladeLength + 10)} x ${formatDim(g.bladeRootChord)}`, "1.5 mm", "Trapezoid with Tab", `Pitch: ${g.statedPitch}°`],
+            ["6", "Bottle Cap Hub", "Plastic Cap", "1", `⌀ ${formatDim(g.currentHubDia)}`, "Rigid Plastic", "Cylinder", "3 blade slots"],
+            ["7", "Bamboo Skewers", "Bamboo Skewer", "3", `Length: ${formatDim(g.currentThroatDia/2 + 20)}`, "⌀ 3.0 mm", "Rod", "Support spokes"],
+            ["8", "Cardboard Stand", "Cardboard (5-ply)", "2", `${formatDim(260 * state.scaleFactor)} x ${formatDim(120 * state.scaleFactor)}`, formatDim(g.currentCardboardThick), "Cradle", "Base stand support"]
+          ];
+
+          const csvContent = rows.map(e => e.map(x => `"${x}"`).join(",")).join("\n");
+          const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `b-dwat-cardboard-cutlist-${Math.round(state.scaleFactor * 100)}pct.csv`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
+        function downloadTemplateSVG(svgId, filename) {
+          const svgEl = document.getElementById(svgId);
+          if (!svgEl) return;
+          const svgData = new XMLSerializer().serializeToString(svgEl);
+          const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
+        function downloadStandaloneHTML() {
+          const htmlContent = document.documentElement.outerHTML;
+          const blob = new Blob([htmlContent], { type: "text/html;charset=utf-8" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = "b-dwat-cardboard-workbench.html";
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+
+        function printDrawings() {
+          window.print();
+        }
+
+        function confirmReset() {
+          document.getElementById('resetModal').classList.add('open');
+        }
+
+        function executeReset() {
+          document.getElementById('resetModal').classList.remove('open');
+          state.scaleFactor = 1.0;
+          state.unit = 'mm';
+          state.geo = JSON.parse(JSON.stringify(BASELINE));
+          recalculateModel();
+          renderAssemblyTree();
+          renderBudgetTable();
+          renderCutList();
+          renderPrintTemplates();
+          renderDiagnostics();
+          resetCamera();
+          drawCurrentView();
+        }
+
+        return {
+          init,
+          switchTab,
+          setUnit,
+          setViewMode,
+          triggerAssemblyAnimation,
+          toggleSpin,
+          onWindSpeedChange,
+          onScaleRangeInput,
+          setScalePreset,
+          onTargetThroatChange,
+          setBladeDatumMode,
+          updateGeoParam,
+          updateRotorParam,
+          toggleComponentVisibility,
+          toggleCutaway,
+          toggleDimensions,
+          toggleWireframe,
+          toggleLockHardware,
+          toggleRoundMm,
+          setExplodedDist,
+          resetCamera,
+          zoomCamera,
+          onCardboardTypeChange,
+          onPvcThicknessChange,
+          onSeamOverlapChange,
+          onSkewerDiaChange,
+          updateNesting,
+          toggleBudgetScrap,
+          updateBudgetCost,
+          updateBudgetQty,
+          addBudgetItemPrompt,
+          deleteBudgetItem,
+          resetBudgetToBaseline,
+          exportProjectJSON,
+          importProjectJSON,
+          exportCutListCSV,
+          downloadTemplateSVG,
+          downloadStandaloneHTML,
+          printDrawings,
+          confirmReset,
+          executeReset
+        };
+      })();
+
+      window.addEventListener('DOMContentLoaded', App.init);
+    </script>
+  </body>
+</html>

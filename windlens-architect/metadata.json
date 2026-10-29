@@ -1,0 +1,6 @@
+{
+  "name": "b-DWAT WindLens Cardboard Visualizer",
+  "description": "Parametric CAD workbench, dimension visualizer, clearance checker, and cardboard fabrication template planner for Brimmed Diffuser-Augmented Wind Turbines (b-DWAT).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
